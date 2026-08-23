@@ -1,7 +1,7 @@
 # PROOFLEARN Project Status
 
 ## Current Task
-TASK 06 — Basic SaaS Navigation + Learning Selection
+TASK 07 — FastAPI Backend Foundation
 
 ## Completed
 - **Task 01 (Project Foundation & Tooling)**:
@@ -40,16 +40,25 @@ TASK 06 — Basic SaaS Navigation + Learning Selection
   - Built interactive curriculum selection UI ([frontend/src/components/learning/learning-selector.tsx](file:///c:/Users/varap/Downloads/PROOFLEARN/frontend/src/components/learning/learning-selector.tsx)) on `/learn`.
   - Built dynamic learning destination route (`/learn/[subjectSlug]/[conceptSlug]`) with relational database validation and custom not-found handling.
   - Formalized documentation in [docs/LEARNING_SELECTION.md](file:///c:/Users/varap/Downloads/PROOFLEARN/docs/LEARNING_SELECTION.md).
+- **Task 07 (FastAPI Backend Foundation)**:
+  - Established modular FastAPI package structure (`app/core`, `app/api`, `app/schemas`, `app/db`, `app/middleware`, `app/dependencies`).
+  - Configured Pydantic Settings configuration ([backend/app/core/config.py](file:///c:/Users/varap/Downloads/PROOFLEARN/backend/app/core/config.py)).
+  - Implemented safe logging and Request ID correlation middleware ([backend/app/middleware/request_id.py](file:///c:/Users/varap/Downloads/PROOFLEARN/backend/app/middleware/request_id.py)).
+  - Built standardized response & error envelopes ([backend/app/schemas/common.py](file:///c:/Users/varap/Downloads/PROOFLEARN/backend/app/schemas/common.py)).
+  - Implemented versioned API namespace `/api/v1` and health check ([backend/app/api/v1/health.py](file:///c:/Users/varap/Downloads/PROOFLEARN/backend/app/api/v1/health.py)).
+  - Established Supabase server client provider ([backend/app/db/supabase.py](file:///c:/Users/varap/Downloads/PROOFLEARN/backend/app/db/supabase.py)) and JWT authentication verification dependency ([backend/app/dependencies/auth.py](file:///c:/Users/varap/Downloads/PROOFLEARN/backend/app/dependencies/auth.py)).
+  - Built automated pytest test suite (`test_health.py`, `test_auth.py`) passing with 100% success.
+  - Created backend documentation ([docs/API.md](file:///c:/Users/varap/Downloads/PROOFLEARN/docs/API.md), [backend/README.md](file:///c:/Users/varap/Downloads/PROOFLEARN/backend/README.md)).
 
 ## Not Yet Implemented
-The following product features belong to subsequent tasks and are strictly omitted from Tasks 01–06:
-- FastAPI Backend Foundation & Business Logic Endpoints (Task 07)
-- Gemini API integration & AI Router implementation
-- AI Learning Room & Interactive Socratic Chat
-- Practice Engine
-- PROOF MODE Server-Side Lockdown Implementation
-- Transfer Challenge Engine
-- Learning Evidence Index (LEI) Calculation Engine
+The following product features belong to subsequent tasks and are strictly omitted from Tasks 01–07:
+- Frontend ↔ FastAPI Integration (Task 08)
+- Real Learning Session State Creation (Task 09)
+- Gemini API integration & Socratic AI Router (Task 10)
+- Practice Engine (Task 11)
+- PROOF MODE Server-Side Lockdown Implementation (Task 12)
+- Transfer Challenge Engine (Task 13)
+- Learning Evidence Index (LEI) Calculation Engine (Task 14)
 - Learning History & Analytics Dashboards
 - Production Cloudflare & Backend Deployment
 
@@ -57,14 +66,15 @@ The following product features belong to subsequent tasks and are strictly omitt
 ```
 Next.js Frontend (TypeScript + Tailwind CSS + shadcn/ui + Supabase SSR Auth)
    │
-   ▼ (REST / JSON)
+   ▼ (REST / JSON with Bearer JWT)
 FastAPI Backend (Python 3.14 Authoritative Layer)
    │
-   ├── Supabase Auth (Google OAuth 2.0 PKCE Flow)
-   ├── Supabase PostgreSQL (9 tables + RLS + Starter Curriculum Seed)
-   ├── AI Router (Gemini + Fallback Provider)
-   └── Learning Evaluation Engine (scikit-learn & Rule Engine)
+   ├── Core Config (Pydantic Settings + Safe Logging)
+   ├── Auth Dependency (Supabase JWT Verification)
+   ├── Supabase PostgreSQL (9 tables + RLS + Seed Data)
+   ├── AI Router (Gemini + Fallback Provider - Planned Task 10)
+   └── Learning Evaluation Engine (scikit-learn - Planned Task 14)
 ```
 
 ## Next Task
-TASK 07 — FastAPI Backend Foundation
+TASK 08 — Frontend ↔ FastAPI Integration

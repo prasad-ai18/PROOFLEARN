@@ -14,18 +14,19 @@ PROOFLEARN is an AI-powered learning verification SaaS that bridges the gap betw
 - **[System Architecture](file:///c:/Users/varap/Downloads/PROOFLEARN/docs/ARCHITECTURE.md)**: High-level topology, trust boundaries, sequence diagrams, and technology stack.
 - **[Authentication Specification](file:///c:/Users/varap/Downloads/PROOFLEARN/docs/AUTHENTICATION.md)**: Google OAuth 2.0, Supabase Auth PKCE flow, Next.js SSR session cookies, and setup guides.
 - **[Learning Selection Specification](file:///c:/Users/varap/Downloads/PROOFLEARN/docs/LEARNING_SELECTION.md)**: Product flow, catalog data access layer, dynamic routes, and selection UI.
-- **[REST API Specification](file:///c:/Users/varap/Downloads/PROOFLEARN/docs/API_SPECIFICATION.md)**: `/api/v1` routes, standardized response envelopes, and error codes.
+- **[REST API Specification & Design](file:///c:/Users/varap/Downloads/PROOFLEARN/docs/API.md)**: `/api/v1` routes, standardized response envelopes, and error codes.
 - **[Domain Model](file:///c:/Users/varap/Downloads/PROOFLEARN/docs/DOMAIN_MODEL.md)**: Conceptual entities, ER diagram, relationships, and invariants.
 - **[Database Schema](file:///c:/Users/varap/Downloads/PROOFLEARN/docs/DATABASE_SCHEMA.md)**: PostgreSQL tables, relational constraints, RLS policies, indexes, and starter curriculum seed data.
 - **[Security Architecture](file:///c:/Users/varap/Downloads/PROOFLEARN/docs/SECURITY_ARCHITECTURE.md)**: Server-side PROOF MODE lockdown, Zero-Trust client boundary, and LEI integrity.
 - **[Project Status & Roadmap](file:///c:/Users/varap/Downloads/PROOFLEARN/docs/PROJECT_STATUS.md)**: Milestone tracking and completed tasks.
+- **[Backend Service Guide](file:///c:/Users/varap/Downloads/PROOFLEARN/backend/README.md)**: FastAPI environment setup, local execution, and test suites.
 
 ---
 
 ## Current Status
-**TASK 06 — BASIC SAAS NAVIGATION + LEARNING SELECTION** (Completed)
+**TASK 07 — FASTAPI BACKEND FOUNDATION** (Completed)
 
-Authenticated SaaS navigation shell with user profile dropdown, data access layer for subjects and concepts, interactive curriculum selector on `/learn`, and dynamic validated route `/learn/[subjectSlug]/[conceptSlug]` established.
+Authoritative Python FastAPI service established with modular package architecture, Pydantic Settings configuration, Request-ID middleware, standardized JSON response/error envelopes, `/api/v1/health` endpoint, centralized Supabase client provider, and cryptographic JWT authentication verification foundation.
 
 ---
 
@@ -37,13 +38,14 @@ User Browser
    ▼ (HTTPS / OAuth 2.0 PKCE)
 Next.js Frontend (TypeScript + Tailwind CSS + shadcn/ui + Supabase SSR Auth)
    │
-   ▼ (REST / JSON)
+   ▼ (REST / JSON with Bearer JWT)
 FastAPI Backend (Python 3.14 Authoritative Layer)
    │
-   ├── Supabase Auth (Google OAuth 2.0)
+   ├── Core Config (Pydantic Settings + Safe Logging)
+   ├── Auth Dependency (Supabase JWT Verification)
    ├── Supabase PostgreSQL (9 tables + RLS + Starter Curriculum Seed)
-   ├── AI Router (Google Gemini + Fallback Provider)
-   └── Learning Evaluation Engine (scikit-learn & Rule Engine)
+   ├── AI Router (Google Gemini + Fallback Provider - Planned Task 10)
+   └── Learning Evaluation Engine (scikit-learn & Rule Engine - Planned Task 14)
 ```
 
 ---
@@ -64,9 +66,6 @@ PROOFLEARN/
 │   │   │   ├── layout.tsx
 │   │   │   └── page.tsx             # Design system showcase
 │   │   ├── components/   # UI primitives, layout, and learning selector
-│   │   │   ├── layout/   # AppShell, Header, Footer, UserNav
-│   │   │   ├── learning/ # LearningSelector
-│   │   │   └── ui/       # Button, Card, DropdownMenu, Badge, etc.
 │   │   ├── lib/
 │   │   │   ├── data/     # Typed data access (subjects.ts, concepts.ts)
 │   │   │   ├── supabase/ # Supabase browser, server, and middleware clients
@@ -80,12 +79,32 @@ PROOFLEARN/
 ├── backend/              # FastAPI Python service
 │   ├── app/
 │   │   ├── __init__.py
-│   │   ├── main.py       # FastAPI application entrypoint & healthcheck
-│   │   └── schemas/      # Pydantic v2 domain schemas (database.py)
+│   │   ├── main.py       # FastAPI application entrypoint & middleware
+│   │   ├── api/
+│   │   │   ├── router.py # Root API router (/api/v1)
+│   │   │   └── v1/
+│   │   │       ├── router.py # V1 router
+│   │   │       └── health.py # GET /api/v1/health
+│   │   ├── core/
+│   │   │   ├── config.py # Pydantic Settings
+│   │   │   ├── logging.py# Safe logging configuration
+│   │   │   └── security.py
+│   │   ├── db/
+│   │   │   └── supabase.py # Supabase client provider
+│   │   ├── dependencies/
+│   │   │   └── auth.py   # JWT Bearer token authentication dependency
+│   │   ├── middleware/
+│   │   │   └── request_id.py # X-Request-ID middleware
+│   │   └── schemas/
+│   │       ├── common.py # Reusable response/error envelopes
+│   │       └── database.py # Pydantic domain models
 │   ├── tests/
-│   │   └── test_health.py# Automated healthcheck test suite
+│   │   ├── test_health.py# Automated healthcheck and error tests
+│   │   └── test_auth.py  # Authentication and security tests
 │   ├── requirements.txt  # Python dependencies
+│   ├── pytest.ini        # Pytest configuration
 │   ├── .env.example      # Backend environment template
+│   ├── README.md         # Backend service guide
 │   └── .venv/            # Python virtual environment (ignored by Git)
 ├── supabase/             # Supabase PostgreSQL database migrations
 │   └── migrations/
@@ -95,7 +114,7 @@ PROOFLEARN/
 │   ├── ARCHITECTURE.md   # System architecture & component design
 │   ├── AUTHENTICATION.md # Google OAuth & Supabase Auth guide
 │   ├── LEARNING_SELECTION.md # Product flow & learning catalog architecture
-│   ├── API_SPECIFICATION.md # REST API conventions & endpoints
+│   ├── API.md            # REST API conventions & endpoints
 │   ├── DOMAIN_MODEL.md   # Conceptual ER model & domain entities
 │   ├── DATABASE_SCHEMA.md# PostgreSQL tables, constraints, RLS & seed data
 │   ├── SECURITY_ARCHITECTURE.md # Security boundaries & Proof Mode enforcement
@@ -118,7 +137,7 @@ pip install -r requirements.txt
 uvicorn app.main:app --reload --port 8000
 ```
 - API Base URL: `http://localhost:8000`
-- Healthcheck: `http://localhost:8000/health`
+- Healthcheck: `http://localhost:8000/api/v1/health`
 - Swagger UI: `http://localhost:8000/docs`
 
 ### 2. Frontend Setup
@@ -136,11 +155,13 @@ npm run dev
 
 ## Health Endpoint
 
-- **Route**: `GET /health`
+- **Route**: `GET /api/v1/health`
 - **Response**:
 ```json
 {
   "status": "ok",
-  "service": "prooflearn-api"
+  "service": "prooflearn-api",
+  "version": "0.1.0",
+  "environment": "development"
 }
 ```
