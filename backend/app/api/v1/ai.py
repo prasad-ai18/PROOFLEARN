@@ -3,11 +3,13 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from app.ai.router import ai_router
 from app.core.logging import logger
 from app.core.proof_guard import is_proof_mode_active
+from app.core.rate_limiter import rate_limit_ai
 from app.db.supabase import get_supabase
 from app.dependencies.auth import AuthenticatedUser, get_current_user
 from app.schemas.ai import AILearnRequest, AILearnResponse
 
 router = APIRouter(prefix="/ai", tags=["AI Learning Room"])
+
 
 # Fallback catalog metadata if database connection is in mock/offline mode
 FALLBACK_CATALOG = {
@@ -64,6 +66,7 @@ FALLBACK_CATALOG = {
 async def learn_with_ai(
     request: AILearnRequest,
     current_user: AuthenticatedUser = Depends(get_current_user),
+    _rate: None = Depends(rate_limit_ai),
 ) -> AILearnResponse:
     """
     Authoritative Socratic AI learning endpoint.

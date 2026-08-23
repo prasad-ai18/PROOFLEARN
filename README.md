@@ -11,6 +11,8 @@ PROOFLEARN is an AI-powered learning verification SaaS that bridges the gap betw
 ---
 
 ## Technical Specifications & Documentation
+- **[Security Audit & Architecture Review](file:///c:/Users/varap/Downloads/PROOFLEARN/docs/SECURITY_AUDIT.md)**: Zero-Trust audit findings, secret scanning, RLS review, IDOR resistance, and security headers.
+- **[Production Readiness Guide](file:///c:/Users/varap/Downloads/PROOFLEARN/docs/PRODUCTION_READINESS.md)**: Environment variable matrices, CORS whitelist, Google OAuth setup, rate limiting, and operational notes.
 - **[System Architecture](file:///c:/Users/varap/Downloads/PROOFLEARN/docs/ARCHITECTURE.md)**: High-level topology, trust boundaries, sequence diagrams, and technology stack.
 - **[Learning History Architecture](file:///c:/Users/varap/Downloads/PROOFLEARN/docs/LEARNING_HISTORY.md)**: Student-owned proof ledger, pagination, status filtering, and returning-student continuity.
 - **[Learning Evidence Engine & LEI](file:///c:/Users/varap/Downloads/PROOFLEARN/docs/LEARNING_EVIDENCE.md)**: Transparent deterministic scoring formula, weights, interpretation bands, and scientific disclaimers.
@@ -31,9 +33,9 @@ PROOFLEARN is an AI-powered learning verification SaaS that bridges the gap betw
 ---
 
 ## Current Status
-**TASK 14 — LEARNING HISTORY + POLISHED SAAS UX** (Completed)
+**TASK 15 — SECURITY HARDENING + PRODUCTION CONFIGURATION** (Completed)
 
-Authoritative Learning History endpoint (`GET /api/v1/learning/history`) with pagination, status/subject filtering, returning-user experience, polished SaaS navigation, and automated test suite.
+Zero secrets in bundles/Git, production security headers, in-memory rate limiting, server-locked Proof Mode defense, parameter-safe database queries, and comprehensive security test suite.
 
 ---
 
@@ -42,17 +44,18 @@ Authoritative Learning History endpoint (`GET /api/v1/learning/history`) with pa
 ```
 User Browser
    │
-   ▼ (HTTPS / OAuth 2.0 PKCE)
+   ▼ (HTTPS / OAuth 2.0 PKCE + Security Headers)
 Next.js Frontend (TypeScript + Tailwind CSS + shadcn/ui + Supabase SSR Auth)
    │
-   ▼ (REST / JSON with Bearer JWT via ApiClient)
+   ▼ (REST / JSON with Bearer JWT via ApiClient + Security Headers)
 FastAPI Backend (Python 3.14 Authoritative Layer)
    │
    ├── Core Config (Pydantic Settings + Safe Logging)
+   ├── Security Middleware (RequestId, SecurityHeaders, RateLimiter)
    ├── Auth Dependency (Supabase JWT Verification)
    ├── Proof Guard (Multi-Stage Lockdown: Independent -> Transfer -> Complete)
    ├── Practice Engine (Server-Side Evaluation & Safe Question Delivery)
-   ├── AI Router (Google Gemini google-genai Provider)
+   ├── AI Router (Google Gemini google-genai Provider + RateLimiter)
    ├── Learning Evidence Engine (Pure Deterministic LEI Scoring + Signal Aggregation)
    ├── Learning History Engine (Paginated Historical Ledger + Status Routing)
    └── Supabase PostgreSQL (12 tables + RLS + Learning Evidence Ledger)
@@ -74,7 +77,7 @@ uvicorn app.main:app --reload --port 8000
 - API Base URL: `http://localhost:8000`
 - Healthcheck: `http://localhost:8000/api/v1/health`
 - Identity Check: `http://localhost:8000/api/v1/me` (requires Bearer token)
-- AI Tutoring: `http://localhost:8000/api/v1/ai/learn` (blocked during Proof Mode)
+- AI Tutoring: `http://localhost:8000/api/v1/ai/learn` (rate limited & blocked during Proof Mode)
 - Practice Sessions: `http://localhost:8000/api/v1/practice/sessions`
 - Proof Sessions: `http://localhost:8000/api/v1/proof/sessions`
 - Transfer Challenge: `http://localhost:8000/api/v1/proof/sessions/{id}/transfer`

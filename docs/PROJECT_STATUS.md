@@ -1,7 +1,7 @@
 # PROOFLEARN Project Status
 
 ## Current Task
-TASK 14 — Learning History + Polished SaaS UX
+TASK 15 — Security Hardening + Production Configuration
 
 ## Completed
 - **Task 01 (Project Foundation & Tooling)**:
@@ -98,28 +98,36 @@ TASK 14 — Learning History + Polished SaaS UX
   - Polished SaaS navigation shell ([frontend/src/components/layout/header.tsx](file:///c:/Users/varap/Downloads/PROOFLEARN/frontend/src/components/layout/header.tsx)) with active route highlights for Learn and History.
   - Created automated test suite in [backend/tests/test_history.py](file:///c:/Users/varap/Downloads/PROOFLEARN/backend/tests/test_history.py) (44 total backend tests passing).
   - Created documentation in [docs/LEARNING_HISTORY.md](file:///c:/Users/varap/Downloads/PROOFLEARN/docs/LEARNING_HISTORY.md).
+- **Task 15 (Security Hardening + Production Configuration)**:
+  - Executed secret scanning across codebases and `.next/` bundles (0 secrets leaked).
+  - Configured production security headers on Next.js and FastAPI (`X-Content-Type-Options`, `X-Frame-Options`, `Referrer-Policy`, `Permissions-Policy`).
+  - Added in-memory sliding-window rate limiting (`rate_limit_ai` and `rate_limit_api`).
+  - Hardened input length validation and SQL injection defense.
+  - Created comprehensive security test suite in [backend/tests/test_security.py](file:///c:/Users/varap/Downloads/PROOFLEARN/backend/tests/test_security.py) (52 total backend tests passing 100%).
+  - Created security audit documentation ([docs/SECURITY_AUDIT.md](file:///c:/Users/varap/Downloads/PROOFLEARN/docs/SECURITY_AUDIT.md)) and production readiness guide ([docs/PRODUCTION_READINESS.md](file:///c:/Users/varap/Downloads/PROOFLEARN/docs/PRODUCTION_READINESS.md)).
 
 ## Not Yet Implemented
 The following work belongs to future tasks:
-- Security Hardening & Secret Management (Task 15)
-- Production Cloudflare & Backend Deployment (Future)
+- Automated Testing + End-to-End Validation (Task 16)
+- Production Cloudflare & Backend Deployment (Task 17)
 
 ## Current Architecture
 ```
-Next.js Frontend (TypeScript + Tailwind CSS + shadcn/ui + Supabase SSR Auth)
+Next.js Frontend (TypeScript + Tailwind CSS + shadcn/ui + Supabase SSR Auth + Security Headers)
    │
-   ▼ (REST / JSON with Bearer JWT via ApiClient)
+   ▼ (REST / JSON with Bearer JWT via ApiClient + Security Headers)
 FastAPI Backend (Python 3.14 Authoritative Layer)
    │
    ├── Core Config (Pydantic Settings + Safe Logging)
+   ├── Security Middleware (RequestId, SecurityHeaders, RateLimiter)
    ├── Auth Dependency (Supabase JWT Verification)
    ├── Proof Guard (Multi-Stage Lockdown: Independent -> Transfer -> Complete)
    ├── Practice Engine (Server-Side Evaluation & Safe Question Delivery)
-   ├── AI Router (Google Gemini google-genai Provider)
+   ├── AI Router (Google Gemini google-genai Provider + RateLimiting)
    ├── Learning Evidence Engine (Pure Deterministic LEI Scoring + Signal Aggregation)
    ├── Learning History Engine (Paginated Historical Ledger + Status Routing)
    └── Supabase PostgreSQL (12 tables + RLS + Learning Evidence Ledger)
 ```
 
 ## Next Task
-TASK 15 — SECURITY HARDENING + PRODUCTION CONFIGURATION
+TASK 16 — AUTOMATED TESTING + END-TO-END VALIDATION

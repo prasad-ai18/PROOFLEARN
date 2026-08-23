@@ -9,6 +9,7 @@ from app.api.router import api_router
 from app.core.config import get_settings
 from app.core.logging import logger
 from app.middleware.request_id import RequestIdMiddleware
+from app.middleware.security_headers import SecurityHeadersMiddleware
 from app.schemas.common import ErrorDetail, ErrorResponse, HealthResponse
 
 
@@ -35,8 +36,9 @@ app = FastAPI(
     lifespan=lifespan,
 )
 
-# 1. Register Request ID Middleware
+# 1. Register Request ID and Security Headers Middleware
 app.add_middleware(RequestIdMiddleware)
+app.add_middleware(SecurityHeadersMiddleware)
 
 # 2. Register Safe CORS Configuration
 app.add_middleware(
@@ -46,6 +48,7 @@ app.add_middleware(
     allow_methods=["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
     allow_headers=["Content-Type", "Authorization", "X-Request-ID", "Accept"],
 )
+
 
 
 # 3. Centralized Exception Handlers
