@@ -20,17 +20,32 @@ import { AlertCircle, Lock, ShieldCheck } from "lucide-react";
 function SignInContent() {
   const searchParams = useSearchParams();
   const errorParam = searchParams.get("error");
+  const errorDescParam = searchParams.get("error_description");
   const redirectTo = searchParams.get("redirectTo") || "/learn";
 
   const [isLoading, setIsLoading] = useState(false);
-  const [errorMessage, setErrorMessage] = useState<string | null>(
-    errorParam ? "Unable to complete Google sign-in. Please try again." : null
-  );
+  const [errorMessage, setErrorMessage] = useState<string | null>(() => {
+    if (errorDescParam) return errorDescParam;
+    if (errorParam === "oauth_callback_failed") return "Google authentication was cancelled or failed.";
+    if (errorParam === "code_exchange_failed") return "Failed to exchange authentication code with Supabase.";
+    if (errorParam === "missing_oauth_code") return "Authentication code was not provided.";
+    if (errorParam) return `Authentication error: ${errorParam}`;
+    return null;
+  });
 
   const handleGoogleSignIn = async () => {
     try {
       setIsLoading(true);
       setErrorMessage(null);
+
+      const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+      if (!supabaseUrl || supabaseUrl.includes("your-project")) {
+        setErrorMessage(
+          "Supabase environment variables are missing. Please configure NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY in frontend/.env.local."
+        );
+        setIsLoading(false);
+        return;
+      }
 
       const supabase = createClient();
       const origin = window.location.origin;
@@ -48,14 +63,17 @@ function SignInContent() {
       });
 
       if (error) {
-        setErrorMessage("Unable to sign in with Google. Please try again.");
+        setErrorMessage(error.message || "Unable to sign in with Google. Please try again.");
         setIsLoading(false);
       }
-    } catch {
-      setErrorMessage("A network or configuration error occurred. Please try again.");
+    } catch (err: unknown) {
+      setErrorMessage(
+        err instanceof Error ? err.message : "A network or configuration error occurred. Please try again."
+      );
       setIsLoading(false);
     }
   };
+
 
   return (
     <div className="flex min-h-[calc(100vh-14rem)] items-center justify-center py-8">
