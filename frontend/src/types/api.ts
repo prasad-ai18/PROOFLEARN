@@ -17,6 +17,26 @@ export interface MeResponse {
   avatar_url: string | null;
 }
 
+export interface ChatMessage {
+  role: "user" | "model" | "assistant";
+  content: string;
+}
+
+export interface AILearnRequest {
+  subject_slug: string;
+  concept_slug: string;
+  message: string;
+  history?: ChatMessage[];
+}
+
+export interface AILearnResponse {
+  message: string;
+  subject: string;
+  concept: string;
+  provider: string;
+  model: string;
+}
+
 export interface ApiErrorDetail {
   code: string;
   message: string;

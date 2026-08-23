@@ -1,7 +1,7 @@
 # PROOFLEARN Project Status
 
 ## Current Task
-TASK 08 — Frontend ↔ FastAPI Integration
+TASK 09 — AI Learning Room
 
 ## Completed
 - **Task 01 (Project Foundation & Tooling)**:
@@ -55,12 +55,18 @@ TASK 08 — Frontend ↔ FastAPI Integration
   - Created authenticated backend endpoint `GET /api/v1/me` ([backend/app/api/v1/auth.py](file:///c:/Users/varap/Downloads/PROOFLEARN/backend/app/api/v1/auth.py)) protected by `Depends(get_current_user)` returning verified `MeResponse`.
   - Added comprehensive backend tests verifying unauthenticated 401s, invalid token handling, and valid identity derivation.
   - Created integration documentation in [docs/FRONTEND_BACKEND_INTEGRATION.md](file:///c:/Users/varap/Downloads/PROOFLEARN/docs/FRONTEND_BACKEND_INTEGRATION.md).
+- **Task 09 (AI Learning Room)**:
+  - Established modular AI provider architecture (`app/ai/base.py`, `app/ai/providers/gemini.py`, `app/ai/router.py`).
+  - Integrated official Google Gemini SDK (`google-genai`) with system prompt engineering for Socratic concept tutoring.
+  - Created authenticated backend route `POST /api/v1/ai/learn` ([backend/app/api/v1/ai.py](file:///c:/Users/varap/Downloads/PROOFLEARN/backend/app/api/v1/ai.py)) with subject/concept catalog validation, payload length limits (4,000 chars), and in-memory history windowing.
+  - Extended frontend API client with `api.learnWithAI(...)`.
+  - Built interactive Socratic AI Learning Room UI ([frontend/src/components/learning/ai-learning-room.tsx](file:///c:/Users/varap/Downloads/PROOFLEARN/frontend/src/components/learning/ai-learning-room.tsx)) on `/learn/[subjectSlug]/[conceptSlug]`.
+  - Created automated backend test suite ([backend/tests/test_ai.py](file:///c:/Users/varap/Downloads/PROOFLEARN/backend/tests/test_ai.py)) covering auth, request validation, catalog checks, and mock provider dispatches.
+  - Created AI Learning Room documentation in [docs/AI_LEARNING_ROOM.md](file:///c:/Users/varap/Downloads/PROOFLEARN/docs/AI_LEARNING_ROOM.md).
 
 ## Not Yet Implemented
-The following product features belong to subsequent tasks and are strictly omitted from Tasks 01–08:
-- AI Learning Room & Interactive Socratic Chat (Task 09)
-- Gemini API integration & AI Router implementation (Task 10)
-- Practice Engine (Task 11)
+The following product features belong to subsequent tasks and are strictly omitted from Tasks 01–09:
+- Practice Engine (Task 10)
 - PROOF MODE Server-Side Lockdown Implementation (Task 12)
 - Transfer Challenge Engine (Task 13)
 - Learning Evidence Index (LEI) Calculation Engine (Task 14)
@@ -77,9 +83,9 @@ FastAPI Backend (Python 3.14 Authoritative Layer)
    ├── Core Config (Pydantic Settings + Safe Logging)
    ├── Auth Dependency (Supabase JWT Verification)
    ├── Supabase PostgreSQL (9 tables + RLS + Seed Data)
-   ├── AI Router (Gemini + Fallback Provider - Planned Task 10)
-   └── Learning Evaluation Engine (scikit-learn - Planned Task 14)
+   ├── AI Router (Google Gemini google-genai Provider)
+   └── Learning Evaluation Engine (Planned Tasks 10-14)
 ```
 
 ## Next Task
-TASK 09 — AI Learning Room
+TASK 10 — PRACTICE ENGINE

@@ -67,62 +67,53 @@ All API endpoints follow uniform JSON serialization conventions.
   "avatar_url": "https://example.com/avatar.png"
 }
 ```
-- **Error**: Returns `401 Unauthorized` with `{"error": {"code": "MISSING_CREDENTIALS" | "INVALID_TOKEN", "message": "..."}}` if the token is missing or invalid.
 
-### 3.3 Service Root & Legacy Health Probes
-- `GET /`: Returns service identifier.
-- `GET /health`: Backward-compatible infrastructure health check probe.
-
-### 3.4 OpenAPI Documentation
-- Interactive Swagger UI: `http://localhost:8000/docs`
-- ReDoc UI: `http://localhost:8000/redoc`
-- OpenAPI JSON Specification: `http://localhost:8000/openapi.json`
-
----
-
-## 4. Authentication Architecture & Invariants
-
-```mermaid
-sequenceDiagram
-    autonumber
-    actor Client as Next.js Frontend / Client
-    participant AuthDep as FastAPI get_current_user Dependency
-    participant Supabase as Supabase Auth Server
-    participant Router as Authoritative Route Handler
-
-    Client->>AuthDep: HTTP Request + Authorization: Bearer <SUPABASE_JWT>
-    alt Token Missing or Incomplete
-        AuthDep-->>Client: 401 Unauthorized (code: MISSING_CREDENTIALS)
-    else Token Provided
-        AuthDep->>Supabase: supabase.auth.get_user(JWT)
-        alt Invalid / Expired Signature
-            AuthDep-->>Client: 401 Unauthorized (code: INVALID_TOKEN)
-        else Verified Token
-            AuthDep->>Router: Inject Verified AuthenticatedUser(id, email)
-            Router-->>Client: 200 OK (Authorized Result)
-        end
-    end
+### 3.3 Socratic AI Concept Tutoring
+- **Route**: `POST /api/v1/ai/learn`
+- **Auth**: Required (`Authorization: Bearer <token>`)
+- **Request Body**:
+```json
+{
+  "subject_slug": "python",
+  "concept_slug": "functions",
+  "message": "What is a function parameter vs an argument?",
+  "history": [
+    { "role": "user", "content": "Hello!" },
+    { "role": "model", "content": "Welcome to Python Functions! What would you like to explore?" }
+  ]
+}
 ```
-
-### 4.1 Zero-Trust Client Boundary Invariant
-- **Rule**: Client-supplied `user_id` values in request bodies, query strings, or URL parameters are **NEVER trusted** for authorization.
-- **Enforcement**: The authenticated user's UUID is strictly derived from the verified cryptographic JWT signature via `get_current_user`.
+- **Success Response (200 OK)**:
+```json
+{
+  "message": "In Python, a parameter is the variable listed inside the function definition...",
+  "subject": "Python",
+  "concept": "Functions",
+  "provider": "gemini",
+  "model": "gemini-2.5-flash"
+}
+```
+- **Error Codes**:
+  - `401 Unauthorized`: Token missing or invalid signature (`MISSING_CREDENTIALS`, `INVALID_TOKEN`).
+  - `404 Not Found`: Subject or concept not found in active catalog (`SUBJECT_NOT_FOUND`, `CONCEPT_NOT_FOUND`).
+  - `422 Unprocessable Content`: Empty message or exceeded maximum 4,000 character limit.
+  - `503 Service Unavailable`: AI provider unconfigured (`AI_PROVIDER_UNAVAILABLE`).
+  - `504 Gateway Timeout`: AI provider upstream response timeout (`AI_TIMEOUT`).
 
 ---
 
-## 5. Middleware & Correlation
+## 4. Middleware & Correlation
 
 - **`RequestIdMiddleware`**: Intercepts every request and generates/echoes a unique `X-Request-ID` header.
 - **CORS Configuration**: Restricts access to explicit trusted origins (`FRONTEND_URL` / `http://localhost:3000`). Wildcard origins (`allow_origins=["*"]`) are disabled.
 
 ---
 
-## 6. Future Endpoint Map (Planned for Tasks 09–14)
+## 5. Future Endpoint Map (Planned for Tasks 10–14)
 
 | Endpoint Prefix | Responsibility | Task |
 | :--- | :--- | :--- |
-| `/api/v1/ai` | Socratic AI Router & message dispatch (Gemini) | Task 09–10 |
-| `/api/v1/practice` | Formative practice evaluation & hints | Task 11 |
+| `/api/v1/practice` | Formative practice evaluation & hints | Task 10 |
 | `/api/v1/proof` | Server-locked PROOF MODE verification | Task 12 |
 | `/api/v1/transfer` | Novel application challenge evaluation | Task 13 |
 | `/api/v1/evidence` | LEI score computation & verifiable record issuance | Task 14 |

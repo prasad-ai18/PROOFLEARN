@@ -1,5 +1,5 @@
 from functools import lru_cache
-from typing import List
+from typing import List, Optional
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -23,6 +23,13 @@ class Settings(BaseSettings):
     SUPABASE_URL: str = "https://your-project.supabase.co"
     SUPABASE_KEY: str = "public-anon-key-placeholder"
     SUPABASE_SERVICE_ROLE_KEY: str = "service-role-key-placeholder"
+    
+    # Google Gemini AI Configuration (Backend Only)
+    GEMINI_API_KEY: Optional[str] = None
+    GEMINI_MODEL: str = "gemini-2.5-flash"
+    AI_REQUEST_TIMEOUT_SECONDS: int = 30
+    AI_MAX_MESSAGE_CHARS: int = 4000
+    AI_MAX_HISTORY_MESSAGES: int = 10
     
     # Security & Execution Limits
     PROOF_MODE_STRICT_LOCKDOWN: bool = True

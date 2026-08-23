@@ -4,6 +4,8 @@ import {
   ApiErrorResponse,
   HealthResponse,
   MeResponse,
+  AILearnRequest,
+  AILearnResponse,
 } from "@/types/api";
 
 export class ApiError extends Error {
@@ -48,7 +50,7 @@ export class ApiClient {
     endpoint: string,
     options: ApiClientOptions = {}
   ): Promise<T> {
-    const { timeoutMs = 15000, token, headers = {}, ...customConfig } = options;
+    const { timeoutMs = 30000, token, headers = {}, ...customConfig } = options;
 
     const normalizedEndpoint = endpoint.startsWith("/") ? endpoint : `/${endpoint}`;
     const url = `${this.baseUrl}${normalizedEndpoint}`;
@@ -166,6 +168,13 @@ export class ApiClient {
 
   async getMe(token: string): Promise<MeResponse> {
     return this.get<MeResponse>("/api/v1/me", { token });
+  }
+
+  async learnWithAI(
+    payload: AILearnRequest,
+    token: string
+  ): Promise<AILearnResponse> {
+    return this.post<AILearnResponse>("/api/v1/ai/learn", payload, { token });
   }
 }
 
