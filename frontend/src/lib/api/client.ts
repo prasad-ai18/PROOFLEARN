@@ -6,6 +6,10 @@ import {
   MeResponse,
   AILearnRequest,
   AILearnResponse,
+  CreatePracticeSessionRequest,
+  PracticeSessionResponse,
+  SubmitAnswerRequest,
+  AnswerEvaluationResponse,
 } from "@/types/api";
 
 export class ApiError extends Error {
@@ -97,10 +101,20 @@ export class ApiClient {
               code: "UNAUTHORIZED",
               message: "Your session has expired or authentication is invalid. Please sign in again.",
             };
+          } else if (response.status === 403) {
+            errorDetail = {
+              code: "FORBIDDEN",
+              message: "You do not have permission to perform this action.",
+            };
           } else if (response.status === 404) {
             errorDetail = {
               code: "NOT_FOUND",
               message: "The requested API resource was not found.",
+            };
+          } else if (response.status === 409) {
+            errorDetail = {
+              code: "CONFLICT",
+              message: "This item has already been submitted.",
             };
           } else if (response.status >= 500) {
             errorDetail = {
@@ -175,6 +189,33 @@ export class ApiClient {
     token: string
   ): Promise<AILearnResponse> {
     return this.post<AILearnResponse>("/api/v1/ai/learn", payload, { token });
+  }
+
+  // Practice Engine Contract Helpers
+  async createPracticeSession(
+    payload: CreatePracticeSessionRequest,
+    token: string
+  ): Promise<PracticeSessionResponse> {
+    return this.post<PracticeSessionResponse>("/api/v1/practice/sessions", payload, { token });
+  }
+
+  async getPracticeSession(
+    sessionId: string,
+    token: string
+  ): Promise<PracticeSessionResponse> {
+    return this.get<PracticeSessionResponse>(`/api/v1/practice/sessions/${sessionId}`, { token });
+  }
+
+  async submitPracticeAnswer(
+    sessionId: string,
+    payload: SubmitAnswerRequest,
+    token: string
+  ): Promise<AnswerEvaluationResponse> {
+    return this.post<AnswerEvaluationResponse>(
+      `/api/v1/practice/sessions/${sessionId}/submit`,
+      payload,
+      { token }
+    );
   }
 }
 

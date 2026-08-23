@@ -11,6 +11,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
+import { PracticeEngine } from "@/components/practice/practice-engine";
 import {
   BrainCircuit,
   Send,
@@ -21,6 +22,7 @@ import {
   RotateCcw,
   AlertCircle,
   Info,
+  Lightbulb,
 } from "lucide-react";
 
 interface AILearningRoomProps {
@@ -35,6 +37,7 @@ interface AILearningRoomProps {
 }
 
 export function AILearningRoom({ subject, concept }: AILearningRoomProps) {
+  const [viewMode, setViewMode] = useState<"tutor" | "practice">("tutor");
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [inputMessage, setInputMessage] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -44,8 +47,10 @@ export function AILearningRoom({ subject, concept }: AILearningRoomProps) {
 
   // Auto-scroll to bottom on new message
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages, isLoading]);
+    if (viewMode === "tutor") {
+      messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [messages, isLoading, viewMode]);
 
   const handleSendMessage = async (e?: React.FormEvent) => {
     if (e) e.preventDefault();
@@ -105,6 +110,17 @@ export function AILearningRoom({ subject, concept }: AILearningRoomProps) {
     }
   };
 
+  // If in practice view mode, render PracticeEngine
+  if (viewMode === "practice") {
+    return (
+      <PracticeEngine
+        subject={subject}
+        concept={concept}
+        onReturnToLearn={() => setViewMode("tutor")}
+      />
+    );
+  }
+
   return (
     <div className="max-w-4xl mx-auto space-y-6 py-4 sm:py-6">
       {/* Top Breadcrumb & Status Bar */}
@@ -125,9 +141,15 @@ export function AILearningRoom({ subject, concept }: AILearningRoomProps) {
             <Sparkles className="w-3.5 h-3.5" />
             <span>AI Learning Mode</span>
           </Badge>
-          <Badge variant="outline" className="text-xs border-zinc-700 bg-zinc-900 text-zinc-300 capitalize">
-            {concept.difficulty} Tier
-          </Badge>
+          <Button
+            size="sm"
+            variant="outline"
+            onClick={() => setViewMode("practice")}
+            className="gap-1.5 text-xs border-amber-500/40 text-amber-300 hover:bg-amber-950/40"
+          >
+            <Lightbulb className="w-3.5 h-3.5 text-amber-400" />
+            <span>Start Practice</span>
+          </Button>
         </div>
       </div>
 
@@ -145,19 +167,26 @@ export function AILearningRoom({ subject, concept }: AILearningRoomProps) {
               </CardDescription>
             </div>
 
-            {/* Proof Mode Future CTA (Disabled for Task 09) */}
-            <div className="flex flex-col items-start sm:items-end">
+            {/* Practice & Proof Action Buttons */}
+            <div className="flex items-center gap-2">
+              <Button
+                size="sm"
+                onClick={() => setViewMode("practice")}
+                className="gap-1.5 text-xs bg-amber-600 hover:bg-amber-500 text-white shadow-sm"
+              >
+                <Lightbulb className="w-3.5 h-3.5" />
+                <span>Practice Challenges</span>
+              </Button>
               <Button
                 variant="outline"
                 size="sm"
                 disabled
-                className="gap-2 text-xs opacity-60 cursor-not-allowed border-dashed border-zinc-700"
-                title="Proof Mode will be enabled after practice challenges in future tasks"
+                className="gap-1.5 text-xs opacity-60 cursor-not-allowed border-dashed border-zinc-700"
+                title="Proof Mode will be enabled in Task 11"
               >
                 <Lock className="w-3.5 h-3.5 text-amber-400" />
-                <span>Prove I Learned It</span>
+                <span>Proof Mode</span>
               </Button>
-              <span className="text-[10px] text-muted-foreground mt-1">Unlocked after practice</span>
             </div>
           </div>
         </CardHeader>
@@ -199,6 +228,14 @@ export function AILearningRoom({ subject, concept }: AILearningRoomProps) {
                   className="text-xs text-zinc-300 bg-zinc-800 hover:bg-zinc-700 border border-zinc-700 rounded-lg px-3 py-1.5 transition-colors text-left"
                 >
                   &ldquo;Can you show a simple example?&rdquo;
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setViewMode("practice")}
+                  className="text-xs text-amber-300 bg-amber-950/40 hover:bg-amber-950/70 border border-amber-500/30 rounded-lg px-3 py-1.5 transition-colors text-left flex items-center gap-1.5"
+                >
+                  <Lightbulb className="w-3 h-3 text-amber-400" />
+                  <span>Ready to test understanding with Practice?</span>
                 </button>
               </div>
             </div>

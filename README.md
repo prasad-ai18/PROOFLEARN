@@ -12,6 +12,7 @@ PROOFLEARN is an AI-powered learning verification SaaS that bridges the gap betw
 
 ## Technical Specifications & Documentation
 - **[System Architecture](file:///c:/Users/varap/Downloads/PROOFLEARN/docs/ARCHITECTURE.md)**: High-level topology, trust boundaries, sequence diagrams, and technology stack.
+- **[Practice Engine Architecture](file:///c:/Users/varap/Downloads/PROOFLEARN/docs/PRACTICE_ENGINE.md)**: Formative question delivery, server-side objective evaluation, and answer-key security.
 - **[AI Learning Room Architecture](file:///c:/Users/varap/Downloads/PROOFLEARN/docs/AI_LEARNING_ROOM.md)**: Socratic tutor prompt design, Google Gemini provider, in-memory history, and UI component contracts.
 - **[Frontend ↔ FastAPI Integration Guide](file:///c:/Users/varap/Downloads/PROOFLEARN/docs/FRONTEND_BACKEND_INTEGRATION.md)**: REST client architecture, Bearer token handling, and `/api/v1/me` identity verification.
 - **[Authentication Specification](file:///c:/Users/varap/Downloads/PROOFLEARN/docs/AUTHENTICATION.md)**: Google OAuth 2.0, Supabase Auth PKCE flow, Next.js SSR session cookies, and setup guides.
@@ -26,9 +27,9 @@ PROOFLEARN is an AI-powered learning verification SaaS that bridges the gap betw
 ---
 
 ## Current Status
-**TASK 09 — AI LEARNING ROOM** (Completed)
+**TASK 10 — PRACTICE ENGINE** (Completed)
 
-Interactive Socratic AI Learning Room implemented for authenticated students across all active subjects and concepts using official `google-genai` SDK and Next.js App Router.
+Interactive Formative Practice Engine implemented with server-evaluated MCQ and short answer questions, zero client answer key leakage, IDOR protection, and immediate pedagogical feedback.
 
 ---
 
@@ -45,9 +46,9 @@ FastAPI Backend (Python 3.14 Authoritative Layer)
    │
    ├── Core Config (Pydantic Settings + Safe Logging)
    ├── Auth Dependency (Supabase JWT Verification)
-   ├── Supabase PostgreSQL (9 tables + RLS + Starter Curriculum Seed)
+   ├── Practice Engine (Server-Side Evaluation & Safe Question Delivery)
    ├── AI Router (Google Gemini google-genai Provider)
-   └── Learning Evaluation Engine (scikit-learn & Rule Engine - Planned Task 14)
+   └── Supabase PostgreSQL (10 tables + RLS + Practice Questions)
 ```
 
 ---
@@ -67,6 +68,7 @@ uvicorn app.main:app --reload --port 8000
 - Healthcheck: `http://localhost:8000/api/v1/health`
 - Identity Check: `http://localhost:8000/api/v1/me` (requires Bearer token)
 - AI Tutoring: `http://localhost:8000/api/v1/ai/learn` (requires Bearer token)
+- Practice Sessions: `http://localhost:8000/api/v1/practice/sessions` (requires Bearer token)
 - Swagger UI: `http://localhost:8000/docs`
 
 ### 2. Frontend Setup
@@ -79,4 +81,4 @@ npm run dev
 - Frontend URL: `http://localhost:3000`
 - Sign In: `http://localhost:3000/auth/sign-in`
 - Learning Catalog: `http://localhost:3000/learn`
-- AI Learning Room: `http://localhost:3000/learn/python/functions`
+- AI Learning Room & Practice: `http://localhost:3000/learn/python/functions`

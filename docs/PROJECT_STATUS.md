@@ -1,7 +1,7 @@
 # PROOFLEARN Project Status
 
 ## Current Task
-TASK 09 — AI Learning Room
+TASK 10 — Practice Engine
 
 ## Completed
 - **Task 01 (Project Foundation & Tooling)**:
@@ -61,13 +61,20 @@ TASK 09 — AI Learning Room
   - Created authenticated backend route `POST /api/v1/ai/learn` ([backend/app/api/v1/ai.py](file:///c:/Users/varap/Downloads/PROOFLEARN/backend/app/api/v1/ai.py)) with subject/concept catalog validation, payload length limits (4,000 chars), and in-memory history windowing.
   - Extended frontend API client with `api.learnWithAI(...)`.
   - Built interactive Socratic AI Learning Room UI ([frontend/src/components/learning/ai-learning-room.tsx](file:///c:/Users/varap/Downloads/PROOFLEARN/frontend/src/components/learning/ai-learning-room.tsx)) on `/learn/[subjectSlug]/[conceptSlug]`.
-  - Created automated backend test suite ([backend/tests/test_ai.py](file:///c:/Users/varap/Downloads/PROOFLEARN/backend/tests/test_ai.py)) covering auth, request validation, catalog checks, and mock provider dispatches.
+  - Created automated backend test suite ([backend/tests/test_ai.py](file:///c:/Users/varap/Downloads/PROOFLEARN/backend/tests/test_ai.py)).
   - Created AI Learning Room documentation in [docs/AI_LEARNING_ROOM.md](file:///c:/Users/varap/Downloads/PROOFLEARN/docs/AI_LEARNING_ROOM.md).
+- **Task 10 (Practice Engine)**:
+  - Created PostgreSQL database migration ([supabase/migrations/20260823000003_practice_questions.sql](file:///c:/Users/varap/Downloads/PROOFLEARN/supabase/migrations/20260823000003_practice_questions.sql)) with RLS and starter practice questions.
+  - Created Pydantic schemas in [backend/app/schemas/practice.py](file:///c:/Users/varap/Downloads/PROOFLEARN/backend/app/schemas/practice.py) ensuring answer keys are omitted from client payloads (`SafeQuestion`).
+  - Created authenticated endpoints in [backend/app/api/v1/practice.py](file:///c:/Users/varap/Downloads/PROOFLEARN/backend/app/api/v1/practice.py) (`POST /sessions`, `GET /sessions/{id}`, `POST /sessions/{id}/submit`) with IDOR ownership validation, duplicate prevention, and server-side evaluation.
+  - Extended frontend API client with `createPracticeSession`, `getPracticeSession`, `submitPracticeAnswer`.
+  - Built interactive Practice Engine UI ([frontend/src/components/practice/practice-engine.tsx](file:///c:/Users/varap/Downloads/PROOFLEARN/frontend/src/components/practice/practice-engine.tsx)) with progress bars, MCQ & short answer input, formative feedback, and session result summaries.
+  - Built automated pytest test suite ([backend/tests/test_practice.py](file:///c:/Users/varap/Downloads/PROOFLEARN/backend/tests/test_practice.py)).
+  - Created Practice Engine documentation in [docs/PRACTICE_ENGINE.md](file:///c:/Users/varap/Downloads/PROOFLEARN/docs/PRACTICE_ENGINE.md).
 
 ## Not Yet Implemented
-The following product features belong to subsequent tasks and are strictly omitted from Tasks 01–09:
-- Practice Engine (Task 10)
-- PROOF MODE Server-Side Lockdown Implementation (Task 12)
+The following product features belong to subsequent tasks and are strictly omitted from Tasks 01–10:
+- PROOF MODE Server-Side Lockdown Implementation (Task 11)
 - Transfer Challenge Engine (Task 13)
 - Learning Evidence Index (LEI) Calculation Engine (Task 14)
 - Learning History & Analytics Dashboards
@@ -82,10 +89,10 @@ FastAPI Backend (Python 3.14 Authoritative Layer)
    │
    ├── Core Config (Pydantic Settings + Safe Logging)
    ├── Auth Dependency (Supabase JWT Verification)
-   ├── Supabase PostgreSQL (9 tables + RLS + Seed Data)
+   ├── Practice Engine (Server-Side Evaluation & Safe Question Delivery)
    ├── AI Router (Google Gemini google-genai Provider)
-   └── Learning Evaluation Engine (Planned Tasks 10-14)
+   └── Supabase PostgreSQL (10 tables + RLS + Practice Questions)
 ```
 
 ## Next Task
-TASK 10 — PRACTICE ENGINE
+TASK 11 — PROOF MODE

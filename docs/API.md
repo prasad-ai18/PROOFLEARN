@@ -30,7 +30,7 @@ All API endpoints follow uniform JSON serialization conventions.
 ```json
 {
   "error": {
-    "code": "VALIDATION_ERROR | UNAUTHORIZED | NOT_FOUND | INTERNAL_SERVER_ERROR",
+    "code": "VALIDATION_ERROR | UNAUTHORIZED | FORBIDDEN | NOT_FOUND | CONFLICT | INTERNAL_SERVER_ERROR",
     "message": "Human-readable error explanation.",
     "details": null
   }
@@ -44,76 +44,42 @@ All API endpoints follow uniform JSON serialization conventions.
 ### 3.1 Health Check
 - **Route**: `GET /api/v1/health`
 - **Auth**: Public (No authentication required)
-- **Response**:
-```json
-{
-  "status": "ok",
-  "service": "prooflearn-api",
-  "version": "0.1.0",
-  "environment": "development"
-}
-```
 
 ### 3.2 Authenticated Identity Verification
 - **Route**: `GET /api/v1/me`
 - **Auth**: Required (`Authorization: Bearer <token>`)
-- **Response**:
-```json
-{
-  "id": "user-uuid-string",
-  "email": "user@example.com",
-  "authenticated": true,
-  "display_name": "Learner",
-  "avatar_url": "https://example.com/avatar.png"
-}
-```
 
 ### 3.3 Socratic AI Concept Tutoring
 - **Route**: `POST /api/v1/ai/learn`
 - **Auth**: Required (`Authorization: Bearer <token>`)
-- **Request Body**:
-```json
-{
-  "subject_slug": "python",
-  "concept_slug": "functions",
-  "message": "What is a function parameter vs an argument?",
-  "history": [
-    { "role": "user", "content": "Hello!" },
-    { "role": "model", "content": "Welcome to Python Functions! What would you like to explore?" }
-  ]
-}
-```
-- **Success Response (200 OK)**:
-```json
-{
-  "message": "In Python, a parameter is the variable listed inside the function definition...",
-  "subject": "Python",
-  "concept": "Functions",
-  "provider": "gemini",
-  "model": "gemini-2.5-flash"
-}
-```
-- **Error Codes**:
-  - `401 Unauthorized`: Token missing or invalid signature (`MISSING_CREDENTIALS`, `INVALID_TOKEN`).
-  - `404 Not Found`: Subject or concept not found in active catalog (`SUBJECT_NOT_FOUND`, `CONCEPT_NOT_FOUND`).
-  - `422 Unprocessable Content`: Empty message or exceeded maximum 4,000 character limit.
-  - `503 Service Unavailable`: AI provider unconfigured (`AI_PROVIDER_UNAVAILABLE`).
-  - `504 Gateway Timeout`: AI provider upstream response timeout (`AI_TIMEOUT`).
+
+### 3.4 Practice Engine
+- **Initialize Session**: `POST /api/v1/practice/sessions`
+  - Auth: Required (`Authorization: Bearer <token>`)
+  - Request: `{"subject_slug": "python", "concept_slug": "functions"}`
+  - Response (201 Created): `PracticeSessionResponse` with safe questions (`SafeQuestion` omits answer keys).
+- **Get Active Session**: `GET /api/v1/practice/sessions/{session_id}`
+  - Auth: Required (`Authorization: Bearer <token>`)
+  - Returns current session status with IDOR verification.
+- **Submit Practice Answer**: `POST /api/v1/practice/sessions/{session_id}/submit`
+  - Auth: Required (`Authorization: Bearer <token>`)
+  - Request: `{"question_id": "q-1", "answer": "Selected Option Text"}`
+  - Response (200 OK): `{"question_id": "q-1", "is_correct": true, "feedback": "...", "explanation": "...", "is_session_completed": false, "correct_count": 1, "total_questions": 5, "percentage": 20.0}`
+  - Errors: `403 Forbidden` on foreign session, `409 Conflict` on duplicate submission.
 
 ---
 
 ## 4. Middleware & Correlation
 
-- **`RequestIdMiddleware`**: Intercepts every request and generates/echoes a unique `X-Request-ID` header.
-- **CORS Configuration**: Restricts access to explicit trusted origins (`FRONTEND_URL` / `http://localhost:3000`). Wildcard origins (`allow_origins=["*"]`) are disabled.
+- **`RequestIdMiddleware`**: Generates and echoes `X-Request-ID` correlation headers.
+- **CORS Configuration**: Restricts origin access strictly to trusted frontend origins (`FRONTEND_URL`).
 
 ---
 
-## 5. Future Endpoint Map (Planned for Tasks 10–14)
+## 5. Future Endpoint Map (Planned for Tasks 11–14)
 
 | Endpoint Prefix | Responsibility | Task |
 | :--- | :--- | :--- |
-| `/api/v1/practice` | Formative practice evaluation & hints | Task 10 |
-| `/api/v1/proof` | Server-locked PROOF MODE verification | Task 12 |
+| `/api/v1/proof` | Server-locked PROOF MODE verification | Task 11 |
 | `/api/v1/transfer` | Novel application challenge evaluation | Task 13 |
 | `/api/v1/evidence` | LEI score computation & verifiable record issuance | Task 14 |
