@@ -1,7 +1,7 @@
 # PROOFLEARN Project Status
 
 ## Current Task
-TASK 05 — Google Authentication with Supabase Auth
+TASK 06 — Basic SaaS Navigation + Learning Selection
 
 ## Completed
 - **Task 01 (Project Foundation & Tooling)**:
@@ -33,15 +33,19 @@ TASK 05 — Google Authentication with Supabase Auth
   - Implemented Next.js session refresh middleware ([frontend/src/middleware.ts](file:///c:/Users/varap/Downloads/PROOFLEARN/frontend/src/middleware.ts)).
   - Built secure OAuth PKCE callback handler ([frontend/src/app/auth/callback/route.ts](file:///c:/Users/varap/Downloads/PROOFLEARN/frontend/src/app/auth/callback/route.ts)) with open-redirect defense and profile auto-synchronization.
   - Created branded Sign-In page ([frontend/src/app/auth/sign-in/page.tsx](file:///c:/Users/varap/Downloads/PROOFLEARN/frontend/src/app/auth/sign-in/page.tsx)) and protected verification route ([frontend/src/app/learn/page.tsx](file:///c:/Users/varap/Downloads/PROOFLEARN/frontend/src/app/learn/page.tsx)).
-  - Implemented server-side logout action ([frontend/src/app/auth/actions.ts](file:///c:/Users/varap/Downloads/PROOFLEARN/frontend/src/app/auth/actions.ts)).
   - Formalized authentication setup guide in [docs/AUTHENTICATION.md](file:///c:/Users/varap/Downloads/PROOFLEARN/docs/AUTHENTICATION.md).
+- **Task 06 (Basic SaaS Navigation + Learning Selection)**:
+  - Created authenticated SaaS navigation shell with user profile dropdown ([frontend/src/components/layout/user-nav.tsx](file:///c:/Users/varap/Downloads/PROOFLEARN/frontend/src/components/layout/user-nav.tsx)) and dynamic auth detection in Header.
+  - Built typed data access layers for subjects ([frontend/src/lib/data/subjects.ts](file:///c:/Users/varap/Downloads/PROOFLEARN/frontend/src/lib/data/subjects.ts)) and concepts ([frontend/src/lib/data/concepts.ts](file:///c:/Users/varap/Downloads/PROOFLEARN/frontend/src/lib/data/concepts.ts)).
+  - Built interactive curriculum selection UI ([frontend/src/components/learning/learning-selector.tsx](file:///c:/Users/varap/Downloads/PROOFLEARN/frontend/src/components/learning/learning-selector.tsx)) on `/learn`.
+  - Built dynamic learning destination route (`/learn/[subjectSlug]/[conceptSlug]`) with relational database validation and custom not-found handling.
+  - Formalized documentation in [docs/LEARNING_SELECTION.md](file:///c:/Users/varap/Downloads/PROOFLEARN/docs/LEARNING_SELECTION.md).
 
 ## Not Yet Implemented
-The following product features belong to subsequent tasks and are strictly omitted from Tasks 01–05:
-- Basic SaaS Navigation + Learning Selection (Task 06)
-- FastAPI REST API business logic endpoints
+The following product features belong to subsequent tasks and are strictly omitted from Tasks 01–06:
+- FastAPI Backend Foundation & Business Logic Endpoints (Task 07)
 - Gemini API integration & AI Router implementation
-- AI Learning Room & Interactive Chat
+- AI Learning Room & Interactive Socratic Chat
 - Practice Engine
 - PROOF MODE Server-Side Lockdown Implementation
 - Transfer Challenge Engine
@@ -63,4 +67,4 @@ FastAPI Backend (Python 3.14 Authoritative Layer)
 ```
 
 ## Next Task
-TASK 06 — Basic SaaS Navigation + Learning Selection
+TASK 07 — FastAPI Backend Foundation

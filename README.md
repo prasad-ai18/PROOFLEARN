@@ -13,6 +13,7 @@ PROOFLEARN is an AI-powered learning verification SaaS that bridges the gap betw
 ## Technical Specifications & Documentation
 - **[System Architecture](file:///c:/Users/varap/Downloads/PROOFLEARN/docs/ARCHITECTURE.md)**: High-level topology, trust boundaries, sequence diagrams, and technology stack.
 - **[Authentication Specification](file:///c:/Users/varap/Downloads/PROOFLEARN/docs/AUTHENTICATION.md)**: Google OAuth 2.0, Supabase Auth PKCE flow, Next.js SSR session cookies, and setup guides.
+- **[Learning Selection Specification](file:///c:/Users/varap/Downloads/PROOFLEARN/docs/LEARNING_SELECTION.md)**: Product flow, catalog data access layer, dynamic routes, and selection UI.
 - **[REST API Specification](file:///c:/Users/varap/Downloads/PROOFLEARN/docs/API_SPECIFICATION.md)**: `/api/v1` routes, standardized response envelopes, and error codes.
 - **[Domain Model](file:///c:/Users/varap/Downloads/PROOFLEARN/docs/DOMAIN_MODEL.md)**: Conceptual entities, ER diagram, relationships, and invariants.
 - **[Database Schema](file:///c:/Users/varap/Downloads/PROOFLEARN/docs/DATABASE_SCHEMA.md)**: PostgreSQL tables, relational constraints, RLS policies, indexes, and starter curriculum seed data.
@@ -22,9 +23,9 @@ PROOFLEARN is an AI-powered learning verification SaaS that bridges the gap betw
 ---
 
 ## Current Status
-**TASK 05 — GOOGLE AUTHENTICATION + SUPABASE AUTH** (Completed)
+**TASK 06 — BASIC SAAS NAVIGATION + LEARNING SELECTION** (Completed)
 
-Google OAuth authentication foundation via Supabase Auth with cookie-based `@supabase/ssr` session management, protected route verification (`/learn`), and profile synchronization established.
+Authenticated SaaS navigation shell with user profile dropdown, data access layer for subjects and concepts, interactive curriculum selector on `/learn`, and dynamic validated route `/learn/[subjectSlug]/[conceptSlug]` established.
 
 ---
 
@@ -57,11 +58,17 @@ PROOFLEARN/
 │   │   │   │   ├── sign-in/page.tsx # Branded Google OAuth sign-in
 │   │   │   │   ├── callback/route.ts# PKCE code exchange & profile sync
 │   │   │   │   └── actions.ts       # Server-side logout action
-│   │   │   ├── learn/page.tsx       # Protected test route verifying session
+│   │   │   ├── learn/
+│   │   │   │   ├── page.tsx         # Learning selection catalog
+│   │   │   │   └── [subjectSlug]/[conceptSlug]/page.tsx # Concept learning route
 │   │   │   ├── layout.tsx
 │   │   │   └── page.tsx             # Design system showcase
-│   │   ├── components/   # UI primitives, layout, and shared state components
+│   │   ├── components/   # UI primitives, layout, and learning selector
+│   │   │   ├── layout/   # AppShell, Header, Footer, UserNav
+│   │   │   ├── learning/ # LearningSelector
+│   │   │   └── ui/       # Button, Card, DropdownMenu, Badge, etc.
 │   │   ├── lib/
+│   │   │   ├── data/     # Typed data access (subjects.ts, concepts.ts)
 │   │   │   ├── supabase/ # Supabase browser, server, and middleware clients
 │   │   │   └── utils.ts  # Helper utilities (cn)
 │   │   ├── types/        # TypeScript database types (database.types.ts)
@@ -87,6 +94,7 @@ PROOFLEARN/
 ├── docs/                 # Architectural specifications
 │   ├── ARCHITECTURE.md   # System architecture & component design
 │   ├── AUTHENTICATION.md # Google OAuth & Supabase Auth guide
+│   ├── LEARNING_SELECTION.md # Product flow & learning catalog architecture
 │   ├── API_SPECIFICATION.md # REST API conventions & endpoints
 │   ├── DOMAIN_MODEL.md   # Conceptual ER model & domain entities
 │   ├── DATABASE_SCHEMA.md# PostgreSQL tables, constraints, RLS & seed data
@@ -121,8 +129,8 @@ npm install
 npm run dev
 ```
 - Frontend URL: `http://localhost:3000`
-- Sign In Page: `http://localhost:3000/auth/sign-in`
-- Protected Test Route: `http://localhost:3000/learn`
+- Sign In: `http://localhost:3000/auth/sign-in`
+- Learning Catalog: `http://localhost:3000/learn`
 
 ---
 
