@@ -176,7 +176,7 @@ def test_ai_blocked_during_active_proof_session():
         assert ai_data["error"]["code"] == "AI_DISABLED_IN_PROOF_MODE"
         assert "disabled during active Proof Mode" in ai_data["error"]["message"]
 
-        # Step 3: Complete Proof Mode by submitting answer
+        # Step 3: Complete Independent Stage and Transfer Stage
         submit_res = client.post(
             f"/api/v1/proof/sessions/{session_id}/submit",
             headers={"Authorization": "Bearer token"},
@@ -186,7 +186,17 @@ def test_ai_blocked_during_active_proof_session():
             },
         )
         assert submit_res.status_code == 200
-        assert submit_res.json()["status"] == "completed"
+        assert submit_res.json()["stage"] == "transfer"
+
+        transfer_res = client.post(
+            f"/api/v1/proof/sessions/{session_id}/transfer",
+            headers={"Authorization": "Bearer token"},
+            json={
+                "student_answer": "I will design convert_voltage_to_celsius and check_thresholds for IoT sensor normalization.",
+            },
+        )
+        assert transfer_res.status_code == 200
+        assert transfer_res.json()["status"] == "completed"
 
         # Step 4: Verify AI tutoring is now unblocked
         ai_unblock_res = client.post(
@@ -208,7 +218,7 @@ def test_ai_blocked_during_active_proof_session():
 
 def test_duplicate_proof_submission():
     """
-    Assert that duplicate submissions to a completed proof session return 409 Conflict.
+    Assert that duplicate submissions to a completed independent proof stage return 409 Conflict.
     """
     user = AuthenticatedUser(user_id="user-proof-dup", email="dup@prooflearn.app")
     app.dependency_overrides[get_current_user] = lambda: user

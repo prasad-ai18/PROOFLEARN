@@ -52,31 +52,32 @@ All API endpoints follow uniform JSON serialization conventions.
 ### 3.3 Socratic AI Concept Tutoring
 - **Route**: `POST /api/v1/ai/learn`
 - **Auth**: Required (`Authorization: Bearer <token>`)
-- **Proof Mode Restriction**: If the authenticated student has an active Proof Mode session for the requested concept, the request is **rejected server-side with `403 Forbidden` (`AI_DISABLED_IN_PROOF_MODE`)**, and the AI model is never invoked.
+- **Proof Mode Restriction**: If the authenticated student has an active Proof Mode session (in Independent or Transfer stage), the request is **rejected server-side with `403 Forbidden` (`AI_DISABLED_IN_PROOF_MODE`)**, and the AI model is never invoked.
 
 ### 3.4 Practice Engine
 - **Initialize Session**: `POST /api/v1/practice/sessions`
   - Auth: Required (`Authorization: Bearer <token>`)
-  - Request: `{"subject_slug": "python", "concept_slug": "functions"}`
-  - Response (201 Created): `PracticeSessionResponse` with safe questions (`SafeQuestion` omits answer keys).
-- **Get Active Session**: `GET /api/v1/practice/sessions/{session_id}`
-  - Auth: Required (`Authorization: Bearer <token>`)
+  - Response (201 Created): `PracticeSessionResponse` with safe questions.
 - **Submit Practice Answer**: `POST /api/v1/practice/sessions/{session_id}/submit`
   - Auth: Required (`Authorization: Bearer <token>`)
   - Response (200 OK): Formative feedback and explanation. Resubmissions return `409 Conflict`.
 
-### 3.5 Proof Mode Engine (Task 11)
+### 3.5 Proof Mode Engine (Tasks 11 & 12)
 - **Enter Proof Mode**: `POST /api/v1/proof/sessions`
   - Auth: Required (`Authorization: Bearer <token>`)
-  - Request: `{"subject_slug": "python", "concept_slug": "functions"}`
-  - Response (201 Created): Initializes server-locked Proof Mode and returns `ProofSessionResponse` with independent challenge.
+  - Response (201 Created): Initializes server-locked Proof Mode (`stage="independent"`, `status="active"`).
 - **Get Proof Session**: `GET /api/v1/proof/sessions/{session_id}`
   - Auth: Required (`Authorization: Bearer <token>`)
   - IDOR Protection: Returns `403 Forbidden` if accessed by a different user.
-- **Submit Proof Challenge**: `POST /api/v1/proof/sessions/{session_id}/submit`
+- **Submit Independent Challenge**: `POST /api/v1/proof/sessions/{session_id}/submit`
   - Auth: Required (`Authorization: Bearer <token>`)
-  - Request: `{"student_answer": "...", "explanation": "..."}`
-  - Response (200 OK): Records response, marks session `completed`, and unblocks AI tutoring. Resubmissions return `409 Conflict`.
+  - Response (200 OK): Transitions session to `stage="transfer"`. AI assistance remains locked.
+- **Get Transfer Challenge**: `GET /api/v1/proof/sessions/{session_id}/transfer`
+  - Auth: Required (`Authorization: Bearer <token>`)
+  - Stage Validation: Returns `400 Bad Request` if independent stage was not completed.
+- **Submit Transfer Challenge**: `POST /api/v1/proof/sessions/{session_id}/transfer`
+  - Auth: Required (`Authorization: Bearer <token>`)
+  - Response (200 OK): Records transfer response, transitions session to `stage="completed"`, and unblocks AI tutoring. Resubmissions return `409 Conflict`.
 
 ---
 
@@ -87,9 +88,8 @@ All API endpoints follow uniform JSON serialization conventions.
 
 ---
 
-## 5. Future Endpoint Map (Planned for Tasks 12–14)
+## 5. Future Endpoint Map (Planned for Tasks 13–14)
 
 | Endpoint Prefix | Responsibility | Task |
 | :--- | :--- | :--- |
-| `/api/v1/transfer` | Novel application challenge evaluation | Task 12 |
 | `/api/v1/evidence` | LEI score computation & verifiable record issuance | Task 13 |

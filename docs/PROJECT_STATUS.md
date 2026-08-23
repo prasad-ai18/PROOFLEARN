@@ -1,7 +1,7 @@
 # PROOFLEARN Project Status
 
 ## Current Task
-TASK 11 — Proof Mode
+TASK 12 — Transfer Challenge
 
 ## Completed
 - **Task 01 (Project Foundation & Tooling)**:
@@ -75,15 +75,18 @@ TASK 11 — Proof Mode
   - Created PostgreSQL database migration ([supabase/migrations/20260823000004_proof_challenges.sql](file:///c:/Users/varap/Downloads/PROOFLEARN/supabase/migrations/20260823000004_proof_challenges.sql)) with RLS and initial concept challenges.
   - Built server-side Proof Guard state manager ([backend/app/core/proof_guard.py](file:///c:/Users/varap/Downloads/PROOFLEARN/backend/app/core/proof_guard.py)) tracking active vs completed proof sessions.
   - Built Proof Mode backend API router ([backend/app/api/v1/proof.py](file:///c:/Users/varap/Downloads/PROOFLEARN/backend/app/api/v1/proof.py)) with endpoints `POST /sessions`, `GET /sessions/{id}`, `POST /sessions/{id}/submit`.
-  - Enforced **server-side AI lockdown**: `POST /api/v1/ai/learn` queries `is_proof_mode_active` and returns `403 Forbidden` (`AI_DISABLED_IN_PROOF_MODE`) if an active proof session exists, bypassing the LLM provider completely.
-  - Extended frontend API client with `createProofSession`, `getProofSession`, `submitProof`.
-  - Built interactive Proof Mode room UI ([frontend/src/components/proof/proof-mode-room.tsx](file:///c:/Users/varap/Downloads/PROOFLEARN/frontend/src/components/proof/proof-mode-room.tsx)) with introduction, active independent challenge view (zero AI controls), and completion confirmation.
-  - Created comprehensive automated test suite ([backend/tests/test_proof.py](file:///c:/Users/varap/Downloads/PROOFLEARN/backend/tests/test_proof.py)) verifying server-side AI rejection, unblocking after submission, IDOR defense, and duplicate prevention.
-  - Formalized Proof Mode documentation in [docs/PROOF_MODE.md](file:///c:/Users/varap/Downloads/PROOFLEARN/docs/PROOF_MODE.md).
+  - Enforced server-side AI lockdown: `POST /api/v1/ai/learn` returns `403 Forbidden` (`AI_DISABLED_IN_PROOF_MODE`) if an active proof session exists.
+  - Created Proof Mode documentation in [docs/PROOF_MODE.md](file:///c:/Users/varap/Downloads/PROOFLEARN/docs/PROOF_MODE.md).
+- **Task 12 (Transfer Challenge)**:
+  - Created PostgreSQL database migration ([supabase/migrations/20260823000005_transfer_challenges.sql](file:///c:/Users/varap/Downloads/PROOFLEARN/supabase/migrations/20260823000005_transfer_challenges.sql)) with RLS policies and realistic transfer challenges (Same Concept + Novel Context).
+  - Extended Proof Guard state machine (`independent` → `transfer` → `completed`), preserving AI lockdown across all active stages.
+  - Added endpoints in [backend/app/api/v1/proof.py](file:///c:/Users/varap/Downloads/PROOFLEARN/backend/app/api/v1/proof.py) (`GET /sessions/{id}/transfer`, `POST /sessions/{id}/transfer`) with stage order enforcement and duplicate protection.
+  - Built full two-stage Proof & Transfer UI in [frontend/src/components/proof/proof-mode-room.tsx](file:///c:/Users/varap/Downloads/PROOFLEARN/frontend/src/components/proof/proof-mode-room.tsx).
+  - Created automated test suite ([backend/tests/test_transfer.py](file:///c:/Users/varap/Downloads/PROOFLEARN/backend/tests/test_transfer.py)) verifying stage progression, AI lockout preservation, and IDOR protection.
+  - Created Transfer Challenge documentation in [docs/TRANSFER_CHALLENGE.md](file:///c:/Users/varap/Downloads/PROOFLEARN/docs/TRANSFER_CHALLENGE.md).
 
 ## Not Yet Implemented
-The following product features belong to subsequent tasks and are strictly omitted from Tasks 01–11:
-- Transfer Challenge Engine (Task 12)
+The following product features belong to subsequent tasks and are strictly omitted from Tasks 01–12:
 - Learning Evidence Index (LEI) Calculation Engine (Task 13)
 - Learning History & Analytics Dashboards
 - Production Cloudflare & Backend Deployment
@@ -97,11 +100,11 @@ FastAPI Backend (Python 3.14 Authoritative Layer)
    │
    ├── Core Config (Pydantic Settings + Safe Logging)
    ├── Auth Dependency (Supabase JWT Verification)
-   ├── Proof Guard (Server-Side Lockdown: AI_ALLOWED = FALSE during Proof Mode)
+   ├── Proof Guard (Server-Side Multi-Stage Lockdown: Independent -> Transfer -> Complete)
    ├── Practice Engine (Server-Side Evaluation & Safe Question Delivery)
    ├── AI Router (Google Gemini google-genai Provider)
-   └── Supabase PostgreSQL (11 tables + RLS + Proof Challenges)
+   └── Supabase PostgreSQL (12 tables + RLS + Transfer Challenges)
 ```
 
 ## Next Task
-TASK 12 — TRANSFER CHALLENGE
+TASK 13 — LEARNING EVIDENCE ENGINE + LEI

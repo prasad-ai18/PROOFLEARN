@@ -4,7 +4,25 @@ from typing import Dict, Optional
 from app.core.logging import logger
 
 # In-memory store for Proof Mode sessions
-# session_id -> { "session_id": ..., "user_id": ..., "subject_slug": ..., "concept_slug": ..., "subject_name": ..., "concept_name": ..., "challenge": {...}, "status": "active" | "completed", "started_at": ..., "submitted_at": ..., "student_answer": ... }
+# session_id -> {
+#   "session_id": ...,
+#   "user_id": ...,
+#   "subject_slug": ...,
+#   "concept_slug": ...,
+#   "subject_name": ...,
+#   "concept_name": ...,
+#   "challenge": {...},
+#   "transfer_challenge": {...},
+#   "stage": "independent" | "transfer" | "completed",
+#   "status": "active" | "completed",
+#   "started_at": ...,
+#   "independent_submitted_at": ...,
+#   "independent_answer": ...,
+#   "independent_explanation": ...,
+#   "transfer_submitted_at": ...,
+#   "transfer_answer": ...,
+#   "transfer_explanation": ...
+# }
 PROOF_SESSIONS: Dict[str, Dict] = {}
 
 
@@ -15,16 +33,14 @@ def is_proof_mode_active(
 ) -> bool:
     """
     Authoritative server-side check to determine if an authenticated student
-    currently has an active (uncompleted) Proof Mode session.
+    currently has an active (uncompleted) Proof Mode session (in independent or transfer stage).
     """
     for session in PROOF_SESSIONS.values():
         if session["user_id"] == user_id and session["status"] == "active":
-            # If concept specified, check exact match
             if concept_slug:
                 if session["concept_slug"] == concept_slug.lower():
                     return True
             else:
-                # Any active proof session locks out AI assistance
                 return True
     return False
 
@@ -60,11 +76,11 @@ def create_proof_session(
     subject_name: str,
     concept_name: str,
     challenge: Dict,
+    transfer_challenge: Optional[Dict] = None,
 ) -> Dict:
     """
     Initializes a new active Proof Mode session, enforcing single active session per concept.
     """
-    # If active session already exists for this concept, return it
     existing = get_active_proof_session_for_user(user_id, concept_slug)
     if existing:
         logger.info(f"Reusing existing active Proof session [{existing['session_id']}] for user [{user_id}]")
@@ -81,11 +97,16 @@ def create_proof_session(
         "subject_name": subject_name,
         "concept_name": concept_name,
         "challenge": challenge,
+        "transfer_challenge": transfer_challenge,
+        "stage": "independent",
         "status": "active",
         "started_at": now_iso,
-        "submitted_at": None,
-        "student_answer": None,
-        "explanation": None,
+        "independent_submitted_at": None,
+        "independent_answer": None,
+        "independent_explanation": None,
+        "transfer_submitted_at": None,
+        "transfer_answer": None,
+        "transfer_explanation": None,
     }
 
     PROOF_SESSIONS[session_id] = session_record
@@ -93,15 +114,15 @@ def create_proof_session(
     return session_record
 
 
-def submit_and_complete_proof(
+def submit_independent_challenge(
     session_id: str,
     user_id: str,
     student_answer: str,
     explanation: Optional[str] = None,
 ) -> Dict:
     """
-    Marks the active proof session as completed.
-    Unlocks AI assistance upon successful submission.
+    Submits the independent proof challenge and transitions the session to the transfer challenge stage.
+    AI assistance remains locked during the transfer challenge stage.
     """
     session = PROOF_SESSIONS.get(session_id)
     if not session:
@@ -110,14 +131,49 @@ def submit_and_complete_proof(
     if session["user_id"] != user_id:
         raise PermissionError("FORBIDDEN")
 
-    if session["status"] == "completed":
+    if session["stage"] in ("transfer", "completed"):
+        # If already submitted independent challenge, raise conflict
+        raise ValueError("ALREADY_SUBMITTED")
+
+    now_iso = datetime.now(timezone.utc).isoformat()
+    session["stage"] = "transfer"
+    session["independent_submitted_at"] = now_iso
+    session["independent_answer"] = student_answer.strip()
+    session["independent_explanation"] = explanation.strip() if explanation else None
+
+    logger.info(f"TRANSITION: User [{user_id}] completed independent stage -> now in TRANSFER stage for session [{session_id}]")
+    return session
+
+
+def submit_transfer_challenge(
+    session_id: str,
+    user_id: str,
+    student_answer: str,
+    explanation: Optional[str] = None,
+) -> Dict:
+    """
+    Submits the transfer challenge response and marks the entire proof session as completed.
+    Unlocks AI assistance upon successful completion.
+    """
+    session = PROOF_SESSIONS.get(session_id)
+    if not session:
+        raise ValueError("SESSION_NOT_FOUND")
+
+    if session["user_id"] != user_id:
+        raise PermissionError("FORBIDDEN")
+
+    if session["stage"] == "independent":
+        raise ValueError("STAGE_MISMATCH_INDEPENDENT_REQUIRED")
+
+    if session["stage"] == "completed" or session["status"] == "completed":
         raise ValueError("ALREADY_COMPLETED")
 
     now_iso = datetime.now(timezone.utc).isoformat()
+    session["stage"] = "completed"
     session["status"] = "completed"
-    session["submitted_at"] = now_iso
-    session["student_answer"] = student_answer.strip()
-    session["explanation"] = explanation.strip() if explanation else None
+    session["transfer_submitted_at"] = now_iso
+    session["transfer_answer"] = student_answer.strip()
+    session["transfer_explanation"] = explanation.strip() if explanation else None
 
-    logger.info(f"UNLOCKED: User [{user_id}] completed Proof Mode session [{session_id}]")
+    logger.info(f"UNLOCKED: User [{user_id}] completed TRANSFER stage & finished Proof Mode session [{session_id}]")
     return session

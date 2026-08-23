@@ -89,6 +89,14 @@ export interface ProofChallenge {
   difficulty: string;
 }
 
+export interface TransferChallenge {
+  id: string;
+  title: string;
+  scenario: string;
+  prompt: string;
+  difficulty: string;
+}
+
 export interface CreateProofSessionRequest {
   subject_slug: string;
   concept_slug: string;
@@ -101,6 +109,8 @@ export interface ProofSessionResponse {
   subject_name: string;
   concept_name: string;
   challenge: ProofChallenge;
+  transfer_challenge?: TransferChallenge | null;
+  stage?: string;
   status: string;
   started_at: string;
   is_completed: boolean;
@@ -113,9 +123,24 @@ export interface SubmitProofRequest {
 
 export interface ProofSubmissionResponse {
   session_id: string;
+  stage: string;
   status: string;
   message: string;
   submitted_at: string;
+}
+
+export interface SubmitTransferRequest {
+  student_answer: string;
+  explanation?: string | null;
+}
+
+export interface TransferSubmissionResponse {
+  session_id: string;
+  stage: string;
+  status: string;
+  message: string;
+  submitted_at: string;
+  evaluation_signals?: Record<string, boolean>;
 }
 
 export interface ApiErrorDetail {

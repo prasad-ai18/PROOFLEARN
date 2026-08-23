@@ -11,6 +11,9 @@ import {
   ProofSessionResponse,
   SubmitProofRequest,
   ProofSubmissionResponse,
+  TransferChallenge,
+  SubmitTransferRequest,
+  TransferSubmissionResponse,
   ApiClientOptions,
   ApiErrorResponse,
 } from "@/types/api";
@@ -218,6 +221,25 @@ class ApiClient {
   ): Promise<ProofSubmissionResponse> {
     return this.post<ProofSubmissionResponse>(
       `/proof/sessions/${sessionId}/submit`,
+      request,
+      { token }
+    );
+  }
+
+  public async getTransferChallenge(
+    sessionId: string,
+    token: string
+  ): Promise<TransferChallenge> {
+    return this.get<TransferChallenge>(`/proof/sessions/${sessionId}/transfer`, { token });
+  }
+
+  public async submitTransferChallenge(
+    sessionId: string,
+    request: SubmitTransferRequest,
+    token: string
+  ): Promise<TransferSubmissionResponse> {
+    return this.post<TransferSubmissionResponse>(
+      `/proof/sessions/${sessionId}/transfer`,
       request,
       { token }
     );

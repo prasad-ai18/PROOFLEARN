@@ -12,6 +12,7 @@ PROOFLEARN is an AI-powered learning verification SaaS that bridges the gap betw
 
 ## Technical Specifications & Documentation
 - **[System Architecture](file:///c:/Users/varap/Downloads/PROOFLEARN/docs/ARCHITECTURE.md)**: High-level topology, trust boundaries, sequence diagrams, and technology stack.
+- **[Transfer Challenge Architecture](file:///c:/Users/varap/Downloads/PROOFLEARN/docs/TRANSFER_CHALLENGE.md)**: Stage 2 conceptual transfer (Same Concept + Novel Context), stage order enforcement, and evaluation signals.
 - **[Proof Mode Architecture](file:///c:/Users/varap/Downloads/PROOFLEARN/docs/PROOF_MODE.md)**: Server-locked independent challenge verification, zero AI assistance enforcement, and lifecycle states.
 - **[Practice Engine Architecture](file:///c:/Users/varap/Downloads/PROOFLEARN/docs/PRACTICE_ENGINE.md)**: Formative question delivery, server-side objective evaluation, and answer-key security.
 - **[AI Learning Room Architecture](file:///c:/Users/varap/Downloads/PROOFLEARN/docs/AI_LEARNING_ROOM.md)**: Socratic tutor prompt design, Google Gemini provider, in-memory history, and UI component contracts.
@@ -28,9 +29,9 @@ PROOFLEARN is an AI-powered learning verification SaaS that bridges the gap betw
 ---
 
 ## Current Status
-**TASK 11 — PROOF MODE** (Completed)
+**TASK 12 — TRANSFER CHALLENGE** (Completed)
 
-Server-enforced **PROOF MODE** implemented with authoritative AI endpoint locking (`403 Forbidden` on `POST /api/v1/ai/learn` when proof session is active), distraction-free independent challenge interface, zero answer-key leakage, IDOR protection, and automated security test suite.
+Two-stage Proof Mode with **Transfer Challenge** (Same Concept + Novel Context), stage transition enforcement, AI assistance lockdown preservation, and automated test suite.
 
 ---
 
@@ -47,10 +48,10 @@ FastAPI Backend (Python 3.14 Authoritative Layer)
    │
    ├── Core Config (Pydantic Settings + Safe Logging)
    ├── Auth Dependency (Supabase JWT Verification)
-   ├── Proof Guard (Server-Side Lockdown: AI_ALLOWED = FALSE during Proof Mode)
+   ├── Proof Guard (Multi-Stage Lockdown: Independent -> Transfer -> Complete)
    ├── Practice Engine (Server-Side Evaluation & Safe Question Delivery)
    ├── AI Router (Google Gemini google-genai Provider)
-   └── Supabase PostgreSQL (11 tables + RLS + Proof Challenges)
+   └── Supabase PostgreSQL (12 tables + RLS + Transfer Challenges)
 ```
 
 ---
@@ -72,6 +73,7 @@ uvicorn app.main:app --reload --port 8000
 - AI Tutoring: `http://localhost:8000/api/v1/ai/learn` (blocked during Proof Mode)
 - Practice Sessions: `http://localhost:8000/api/v1/practice/sessions`
 - Proof Sessions: `http://localhost:8000/api/v1/proof/sessions`
+- Transfer Challenge: `http://localhost:8000/api/v1/proof/sessions/{id}/transfer`
 - Swagger UI: `http://localhost:8000/docs`
 
 ### 2. Frontend Setup
@@ -84,4 +86,4 @@ npm run dev
 - Frontend URL: `http://localhost:3000`
 - Sign In: `http://localhost:3000/auth/sign-in`
 - Learning Catalog: `http://localhost:3000/learn`
-- AI Learning Room & Proof Mode: `http://localhost:3000/learn/python/functions`
+- AI Learning Room, Proof & Transfer: `http://localhost:3000/learn/python/functions`
