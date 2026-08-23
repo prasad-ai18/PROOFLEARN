@@ -11,6 +11,7 @@ PROOFLEARN is an AI-powered learning verification SaaS that bridges the gap betw
 ---
 
 ## Technical Specifications & Documentation
+- **[Production Deployment Guide](file:///c:/Users/varap/Downloads/PROOFLEARN/docs/DEPLOYMENT.md)**: Deployment topology, frontend/backend hosting providers, Docker configuration, environment variable matrices, Google OAuth, and rollback strategies.
 - **[Automated Testing & Validation Specification](file:///c:/Users/varap/Downloads/PROOFLEARN/docs/TESTING.md)**: Test pyramid, unit/integration/E2E suites, Playwright configuration, AI mocking strategy, and coverage.
 - **[Security Audit & Architecture Review](file:///c:/Users/varap/Downloads/PROOFLEARN/docs/SECURITY_AUDIT.md)**: Zero-Trust audit findings, secret scanning, RLS review, IDOR resistance, and security headers.
 - **[Production Readiness Guide](file:///c:/Users/varap/Downloads/PROOFLEARN/docs/PRODUCTION_READINESS.md)**: Environment variable matrices, CORS whitelist, Google OAuth setup, rate limiting, and operational notes.
@@ -34,9 +35,9 @@ PROOFLEARN is an AI-powered learning verification SaaS that bridges the gap betw
 ---
 
 ## Current Status
-**TASK 16 — AUTOMATED TESTING + END-TO-END VALIDATION** (Completed)
+**TASK 17 — PRODUCTION DEPLOYMENT** (Completed)
 
-55 backend tests passing (100% pass rate in 2.46s), Playwright E2E suites for landing, navigation, and responsive viewports, safe AI mocking, and comprehensive full student journey test.
+Production deployment configuration formalized, multi-stage Dockerfiles and compose setups generated, flexible production CORS origin parsing implemented, 55 backend tests passing 100%, and comprehensive deployment guide created.
 
 ---
 
@@ -49,9 +50,9 @@ User Browser
 Next.js Frontend (TypeScript + Tailwind CSS + shadcn/ui + Supabase SSR Auth)
    │
    ▼ (REST / JSON with Bearer JWT via ApiClient + Security Headers)
-FastAPI Backend (Python 3.14 Authoritative Layer + 55 Pytest Unit/Integration/E2E Tests)
+FastAPI Backend (Python 3.12/3.14 Multi-Stage Container + 55 Pytest Tests)
    │
-   ├── Core Config (Pydantic Settings + Safe Logging)
+   ├── Core Config (Pydantic Settings + Flexible CORS)
    ├── Security Middleware (RequestId, SecurityHeaders, RateLimiter)
    ├── Auth Dependency (Supabase JWT Verification)
    ├── Proof Guard (Multi-Stage Lockdown: Independent -> Transfer -> Complete)

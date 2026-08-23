@@ -1,7 +1,7 @@
 # PROOFLEARN Project Status
 
 ## Current Task
-TASK 16 — Automated Testing + End-to-End Validation
+TASK 17 — Production Deployment
 
 ## Completed
 - **Task 01 (Project Foundation & Tooling)**:
@@ -111,19 +111,23 @@ TASK 16 — Automated Testing + End-to-End Validation
   - Configured Playwright E2E test framework ([frontend/playwright.config.ts](file:///c:/Users/varap/Downloads/PROOFLEARN/frontend/playwright.config.ts)) and test suites ([frontend/tests/e2e/](file:///c:/Users/varap/Downloads/PROOFLEARN/frontend/tests/e2e/): `landing.spec.ts`, `navigation.spec.ts`, `responsive.spec.ts`).
   - Total backend automated tests: **55 passed** in **2.46s**. Frontend builds cleanly with 0 errors and 0 warnings.
   - Formalized complete testing specification in [docs/TESTING.md](file:///c:/Users/varap/Downloads/PROOFLEARN/docs/TESTING.md).
+- **Task 17 (Production Deployment)**:
+  - Built production containerization setup for backend ([backend/Dockerfile](file:///c:/Users/varap/Downloads/PROOFLEARN/backend/Dockerfile), [backend/Procfile](file:///c:/Users/varap/Downloads/PROOFLEARN/backend/Procfile)) and frontend ([frontend/Dockerfile](file:///c:/Users/varap/Downloads/PROOFLEARN/frontend/Dockerfile), [docker-compose.yml](file:///c:/Users/varap/Downloads/PROOFLEARN/docker-compose.yml)).
+  - Enhanced dynamic CORS origin parsing in [backend/app/core/config.py](file:///c:/Users/varap/Downloads/PROOFLEARN/backend/app/core/config.py).
+  - Formalized complete production deployment architecture, PaaS provider analysis, environment variable matrices, and rollback procedures in [docs/DEPLOYMENT.md](file:///c:/Users/varap/Downloads/PROOFLEARN/docs/DEPLOYMENT.md).
 
 ## Not Yet Implemented
 The following work belongs to future tasks:
-- Production Cloudflare & Backend Deployment (Task 17)
+- Final README and documentation overhaul (Task 18)
 
 ## Current Architecture
 ```
 Next.js Frontend (TypeScript + Tailwind CSS + shadcn/ui + Playwright E2E + Supabase SSR Auth)
    │
    ▼ (REST / JSON with Bearer JWT via ApiClient + Security Headers)
-FastAPI Backend (Python 3.14 Authoritative Layer + 55 Pytest Unit/Integration/E2E Tests)
+FastAPI Backend (Python 3.12/3.14 Multi-Stage Docker / PaaS + 55 Pytest Tests)
    │
-   ├── Core Config (Pydantic Settings + Safe Logging)
+   ├── Core Config (Pydantic Settings + Flexible CORS)
    ├── Security Middleware (RequestId, SecurityHeaders, RateLimiter)
    ├── Auth Dependency (Supabase JWT Verification)
    ├── Proof Guard (Multi-Stage Lockdown: Independent -> Transfer -> Complete)
@@ -135,4 +139,4 @@ FastAPI Backend (Python 3.14 Authoritative Layer + 55 Pytest Unit/Integration/E2
 ```
 
 ## Next Task
-TASK 17 — PRODUCTION DEPLOYMENT
+TASK 18 — FINAL README + TECHNICAL DOCUMENTATION
