@@ -39,9 +39,19 @@ function SignInContent() {
       setErrorMessage(null);
 
       const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-      if (!supabaseUrl || supabaseUrl.includes("your-project")) {
+      const supabaseKey =
+        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ||
+        process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY;
+
+      if (
+        !supabaseUrl ||
+        !supabaseKey ||
+        supabaseUrl.trim() === "" ||
+        supabaseKey.trim() === "" ||
+        supabaseUrl.includes("your-project")
+      ) {
         setErrorMessage(
-          "Supabase environment variables are missing. Please configure NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY in frontend/.env.local."
+          "Supabase environment variables are missing or empty. Please enter your actual NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY in frontend/.env.local."
         );
         setIsLoading(false);
         return;
@@ -50,6 +60,7 @@ function SignInContent() {
       const supabase = createClient();
       const origin = window.location.origin;
       const callbackUrl = `${origin}/auth/callback?next=${encodeURIComponent(redirectTo)}`;
+
 
       const { error } = await supabase.auth.signInWithOAuth({
         provider: "google",
