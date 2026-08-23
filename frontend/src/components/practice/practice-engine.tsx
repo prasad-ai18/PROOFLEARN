@@ -32,9 +32,15 @@ interface PracticeEngineProps {
   subject: Subject;
   concept: Concept;
   onReturnToLearn?: () => void;
+  onEnterProofMode?: () => void;
 }
 
-export function PracticeEngine({ subject, concept, onReturnToLearn }: PracticeEngineProps) {
+export function PracticeEngine({
+  subject,
+  concept,
+  onReturnToLearn,
+  onEnterProofMode,
+}: PracticeEngineProps) {
   const [session, setSession] = useState<PracticeSessionResponse | null>(null);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [selectedOption, setSelectedOption] = useState<string>("");
@@ -291,18 +297,17 @@ export function PracticeEngine({ subject, concept, onReturnToLearn }: PracticeEn
               )}
             </div>
 
-            {/* Proof Mode Future Transition Point (Disabled for Task 10) */}
+            {/* Proof Mode Transition Button */}
             <div className="flex flex-col items-end w-full sm:w-auto">
               <Button
-                disabled
+                onClick={onEnterProofMode}
                 size="sm"
-                className="gap-2 text-xs bg-zinc-800 text-zinc-400 border border-dashed border-zinc-700 cursor-not-allowed w-full sm:w-auto"
-                title="Proof Mode will be implemented in Task 11"
+                className="gap-2 text-xs bg-amber-600 hover:bg-amber-500 text-white shadow-md font-medium w-full sm:w-auto"
               >
-                <Lock className="w-3.5 h-3.5 text-amber-400" />
+                <Lock className="w-3.5 h-3.5" />
                 <span>Prove I Learned It</span>
               </Button>
-              <span className="text-[10px] text-muted-foreground mt-1">Proof Mode unlocks in Task 11</span>
+              <span className="text-[10px] text-muted-foreground mt-1">Ready for independent verification</span>
             </div>
           </CardFooter>
         </Card>

@@ -12,6 +12,7 @@ PROOFLEARN is an AI-powered learning verification SaaS that bridges the gap betw
 
 ## Technical Specifications & Documentation
 - **[System Architecture](file:///c:/Users/varap/Downloads/PROOFLEARN/docs/ARCHITECTURE.md)**: High-level topology, trust boundaries, sequence diagrams, and technology stack.
+- **[Proof Mode Architecture](file:///c:/Users/varap/Downloads/PROOFLEARN/docs/PROOF_MODE.md)**: Server-locked independent challenge verification, zero AI assistance enforcement, and lifecycle states.
 - **[Practice Engine Architecture](file:///c:/Users/varap/Downloads/PROOFLEARN/docs/PRACTICE_ENGINE.md)**: Formative question delivery, server-side objective evaluation, and answer-key security.
 - **[AI Learning Room Architecture](file:///c:/Users/varap/Downloads/PROOFLEARN/docs/AI_LEARNING_ROOM.md)**: Socratic tutor prompt design, Google Gemini provider, in-memory history, and UI component contracts.
 - **[Frontend ↔ FastAPI Integration Guide](file:///c:/Users/varap/Downloads/PROOFLEARN/docs/FRONTEND_BACKEND_INTEGRATION.md)**: REST client architecture, Bearer token handling, and `/api/v1/me` identity verification.
@@ -27,9 +28,9 @@ PROOFLEARN is an AI-powered learning verification SaaS that bridges the gap betw
 ---
 
 ## Current Status
-**TASK 10 — PRACTICE ENGINE** (Completed)
+**TASK 11 — PROOF MODE** (Completed)
 
-Interactive Formative Practice Engine implemented with server-evaluated MCQ and short answer questions, zero client answer key leakage, IDOR protection, and immediate pedagogical feedback.
+Server-enforced **PROOF MODE** implemented with authoritative AI endpoint locking (`403 Forbidden` on `POST /api/v1/ai/learn` when proof session is active), distraction-free independent challenge interface, zero answer-key leakage, IDOR protection, and automated security test suite.
 
 ---
 
@@ -46,9 +47,10 @@ FastAPI Backend (Python 3.14 Authoritative Layer)
    │
    ├── Core Config (Pydantic Settings + Safe Logging)
    ├── Auth Dependency (Supabase JWT Verification)
+   ├── Proof Guard (Server-Side Lockdown: AI_ALLOWED = FALSE during Proof Mode)
    ├── Practice Engine (Server-Side Evaluation & Safe Question Delivery)
    ├── AI Router (Google Gemini google-genai Provider)
-   └── Supabase PostgreSQL (10 tables + RLS + Practice Questions)
+   └── Supabase PostgreSQL (11 tables + RLS + Proof Challenges)
 ```
 
 ---
@@ -67,8 +69,9 @@ uvicorn app.main:app --reload --port 8000
 - API Base URL: `http://localhost:8000`
 - Healthcheck: `http://localhost:8000/api/v1/health`
 - Identity Check: `http://localhost:8000/api/v1/me` (requires Bearer token)
-- AI Tutoring: `http://localhost:8000/api/v1/ai/learn` (requires Bearer token)
-- Practice Sessions: `http://localhost:8000/api/v1/practice/sessions` (requires Bearer token)
+- AI Tutoring: `http://localhost:8000/api/v1/ai/learn` (blocked during Proof Mode)
+- Practice Sessions: `http://localhost:8000/api/v1/practice/sessions`
+- Proof Sessions: `http://localhost:8000/api/v1/proof/sessions`
 - Swagger UI: `http://localhost:8000/docs`
 
 ### 2. Frontend Setup
@@ -81,4 +84,4 @@ npm run dev
 - Frontend URL: `http://localhost:3000`
 - Sign In: `http://localhost:3000/auth/sign-in`
 - Learning Catalog: `http://localhost:3000/learn`
-- AI Learning Room & Practice: `http://localhost:3000/learn/python/functions`
+- AI Learning Room & Proof Mode: `http://localhost:3000/learn/python/functions`

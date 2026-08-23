@@ -1,5 +1,5 @@
 from fastapi import APIRouter
-from app.api.v1 import ai, auth, health, practice
+from app.api.v1 import ai, auth, health, practice, proof
 
 v1_router = APIRouter()
 
@@ -8,3 +8,4 @@ v1_router.include_router(health.router)
 v1_router.include_router(auth.router)
 v1_router.include_router(ai.router)
 v1_router.include_router(practice.router)
+v1_router.include_router(proof.router)

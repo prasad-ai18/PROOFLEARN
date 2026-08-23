@@ -1,7 +1,7 @@
 # PROOFLEARN Project Status
 
 ## Current Task
-TASK 10 — Practice Engine
+TASK 11 — Proof Mode
 
 ## Completed
 - **Task 01 (Project Foundation & Tooling)**:
@@ -71,12 +71,20 @@ TASK 10 — Practice Engine
   - Built interactive Practice Engine UI ([frontend/src/components/practice/practice-engine.tsx](file:///c:/Users/varap/Downloads/PROOFLEARN/frontend/src/components/practice/practice-engine.tsx)) with progress bars, MCQ & short answer input, formative feedback, and session result summaries.
   - Built automated pytest test suite ([backend/tests/test_practice.py](file:///c:/Users/varap/Downloads/PROOFLEARN/backend/tests/test_practice.py)).
   - Created Practice Engine documentation in [docs/PRACTICE_ENGINE.md](file:///c:/Users/varap/Downloads/PROOFLEARN/docs/PRACTICE_ENGINE.md).
+- **Task 11 (Proof Mode)**:
+  - Created PostgreSQL database migration ([supabase/migrations/20260823000004_proof_challenges.sql](file:///c:/Users/varap/Downloads/PROOFLEARN/supabase/migrations/20260823000004_proof_challenges.sql)) with RLS and initial concept challenges.
+  - Built server-side Proof Guard state manager ([backend/app/core/proof_guard.py](file:///c:/Users/varap/Downloads/PROOFLEARN/backend/app/core/proof_guard.py)) tracking active vs completed proof sessions.
+  - Built Proof Mode backend API router ([backend/app/api/v1/proof.py](file:///c:/Users/varap/Downloads/PROOFLEARN/backend/app/api/v1/proof.py)) with endpoints `POST /sessions`, `GET /sessions/{id}`, `POST /sessions/{id}/submit`.
+  - Enforced **server-side AI lockdown**: `POST /api/v1/ai/learn` queries `is_proof_mode_active` and returns `403 Forbidden` (`AI_DISABLED_IN_PROOF_MODE`) if an active proof session exists, bypassing the LLM provider completely.
+  - Extended frontend API client with `createProofSession`, `getProofSession`, `submitProof`.
+  - Built interactive Proof Mode room UI ([frontend/src/components/proof/proof-mode-room.tsx](file:///c:/Users/varap/Downloads/PROOFLEARN/frontend/src/components/proof/proof-mode-room.tsx)) with introduction, active independent challenge view (zero AI controls), and completion confirmation.
+  - Created comprehensive automated test suite ([backend/tests/test_proof.py](file:///c:/Users/varap/Downloads/PROOFLEARN/backend/tests/test_proof.py)) verifying server-side AI rejection, unblocking after submission, IDOR defense, and duplicate prevention.
+  - Formalized Proof Mode documentation in [docs/PROOF_MODE.md](file:///c:/Users/varap/Downloads/PROOFLEARN/docs/PROOF_MODE.md).
 
 ## Not Yet Implemented
-The following product features belong to subsequent tasks and are strictly omitted from Tasks 01–10:
-- PROOF MODE Server-Side Lockdown Implementation (Task 11)
-- Transfer Challenge Engine (Task 13)
-- Learning Evidence Index (LEI) Calculation Engine (Task 14)
+The following product features belong to subsequent tasks and are strictly omitted from Tasks 01–11:
+- Transfer Challenge Engine (Task 12)
+- Learning Evidence Index (LEI) Calculation Engine (Task 13)
 - Learning History & Analytics Dashboards
 - Production Cloudflare & Backend Deployment
 
@@ -89,10 +97,11 @@ FastAPI Backend (Python 3.14 Authoritative Layer)
    │
    ├── Core Config (Pydantic Settings + Safe Logging)
    ├── Auth Dependency (Supabase JWT Verification)
+   ├── Proof Guard (Server-Side Lockdown: AI_ALLOWED = FALSE during Proof Mode)
    ├── Practice Engine (Server-Side Evaluation & Safe Question Delivery)
    ├── AI Router (Google Gemini google-genai Provider)
-   └── Supabase PostgreSQL (10 tables + RLS + Practice Questions)
+   └── Supabase PostgreSQL (11 tables + RLS + Proof Challenges)
 ```
 
 ## Next Task
-TASK 11 — PROOF MODE
+TASK 12 — TRANSFER CHALLENGE

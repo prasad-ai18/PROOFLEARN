@@ -82,6 +82,42 @@ export interface AnswerEvaluationResponse {
   percentage: number;
 }
 
+export interface ProofChallenge {
+  id: string;
+  title: string;
+  prompt: string;
+  difficulty: string;
+}
+
+export interface CreateProofSessionRequest {
+  subject_slug: string;
+  concept_slug: string;
+}
+
+export interface ProofSessionResponse {
+  session_id: string;
+  subject_slug: string;
+  concept_slug: string;
+  subject_name: string;
+  concept_name: string;
+  challenge: ProofChallenge;
+  status: string;
+  started_at: string;
+  is_completed: boolean;
+}
+
+export interface SubmitProofRequest {
+  student_answer: string;
+  explanation?: string | null;
+}
+
+export interface ProofSubmissionResponse {
+  session_id: string;
+  status: string;
+  message: string;
+  submitted_at: string;
+}
+
 export interface ApiErrorDetail {
   code: string;
   message: string;

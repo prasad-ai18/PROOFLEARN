@@ -1,7 +1,4 @@
 import {
-  ApiClientOptions,
-  ApiErrorDetail,
-  ApiErrorResponse,
   HealthResponse,
   MeResponse,
   AILearnRequest,
@@ -10,213 +7,221 @@ import {
   PracticeSessionResponse,
   SubmitAnswerRequest,
   AnswerEvaluationResponse,
+  CreateProofSessionRequest,
+  ProofSessionResponse,
+  SubmitProofRequest,
+  ProofSubmissionResponse,
+  ApiClientOptions,
+  ApiErrorResponse,
 } from "@/types/api";
 
+const DEFAULT_TIMEOUT_MS = 15000;
+const API_BASE_URL =
+  process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api/v1";
+
 export class ApiError extends Error {
-  public readonly code: string;
-  public readonly status: number;
-  public readonly details?: Record<string, unknown> | null;
+  public code: string;
+  public status: number;
+  public details?: Record<string, unknown> | null;
 
-  constructor(status: number, errorDetail: ApiErrorDetail) {
-    super(errorDetail.message);
+  constructor(
+    message: string,
+    code = "API_ERROR",
+    status = 500,
+    details: Record<string, unknown> | null = null
+  ) {
+    super(message);
     this.name = "ApiError";
+    this.code = code;
     this.status = status;
-    this.code = errorDetail.code;
-    this.details = errorDetail.details;
+    this.details = details;
   }
 }
 
-/**
- * Returns the configured FastAPI base URL from environment variables.
- */
-export function getApiBaseUrl(): string {
-  const url =
-    process.env.NEXT_PUBLIC_API_BASE_URL ||
-    process.env.NEXT_PUBLIC_API_URL ||
-    "http://localhost:8000";
-  return url.replace(/\/+$/, "");
-}
+class ApiClient {
+  private baseUrl: string;
 
-/**
- * Centralized API client for communicating with the FastAPI backend.
- */
-export class ApiClient {
-  private readonly baseUrl: string;
-
-  constructor(baseUrl?: string) {
-    this.baseUrl = baseUrl || getApiBaseUrl();
+  constructor(baseUrl: string) {
+    this.baseUrl = baseUrl.replace(/\/$/, "");
   }
 
-  /**
-   * Generic request dispatcher with timeout, JSON parsing, and error normalization.
-   */
-  async request<T>(
+  private async request<T>(
     endpoint: string,
     options: ApiClientOptions = {}
   ): Promise<T> {
-    const { timeoutMs = 30000, token, headers = {}, ...customConfig } = options;
+    const {
+      timeoutMs = DEFAULT_TIMEOUT_MS,
+      token,
+      headers: customHeaders = {},
+      ...fetchOptions
+    } = options;
 
-    const normalizedEndpoint = endpoint.startsWith("/") ? endpoint : `/${endpoint}`;
-    const url = `${this.baseUrl}${normalizedEndpoint}`;
+    const url = `${this.baseUrl}${endpoint.startsWith("/") ? "" : "/"}${endpoint}`;
+
+    const headers: Record<string, string> = {
+      "Content-Type": "application/json",
+      Accept: "application/json",
+      ...(customHeaders as Record<string, string>),
+    };
+
+    if (token) {
+      headers["Authorization"] = `Bearer ${token}`;
+    }
 
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
 
-    const requestHeaders: Record<string, string> = {
-      "Content-Type": "application/json",
-      Accept: "application/json",
-      ...(headers as Record<string, string>),
-    };
-
-    // Attach Authorization Bearer token if provided
-    if (token) {
-      requestHeaders["Authorization"] = `Bearer ${token}`;
-    }
-
     try {
       const response = await fetch(url, {
-        ...customConfig,
-        headers: requestHeaders,
+        ...fetchOptions,
+        headers,
         signal: controller.signal,
       });
 
       clearTimeout(timeoutId);
 
-      // Handle non-2xx HTTP responses
-      if (!response.ok) {
-        let errorDetail: ApiErrorDetail = {
-          code: `HTTP_${response.status}`,
-          message: `Request failed with status code ${response.status}`,
-        };
+      const contentType = response.headers.get("content-type");
+      const isJson = contentType && contentType.includes("application/json");
 
-        try {
-          const body: ApiErrorResponse = await response.json();
-          if (body && body.error) {
-            errorDetail = body.error;
-          }
-        } catch {
-          // If response body is not JSON, fallback to status text
-          if (response.status === 401) {
-            errorDetail = {
-              code: "UNAUTHORIZED",
-              message: "Your session has expired or authentication is invalid. Please sign in again.",
-            };
-          } else if (response.status === 403) {
-            errorDetail = {
-              code: "FORBIDDEN",
-              message: "You do not have permission to perform this action.",
-            };
-          } else if (response.status === 404) {
-            errorDetail = {
-              code: "NOT_FOUND",
-              message: "The requested API resource was not found.",
-            };
-          } else if (response.status === 409) {
-            errorDetail = {
-              code: "CONFLICT",
-              message: "This item has already been submitted.",
-            };
-          } else if (response.status >= 500) {
-            errorDetail = {
-              code: "SERVER_ERROR",
-              message: "A backend service error occurred. Please try again later.",
-            };
+      let data: unknown = null;
+      if (isJson) {
+        data = await response.json();
+      } else {
+        data = await response.text();
+      }
+
+      if (!response.ok) {
+        let errorCode = "API_ERROR";
+        let errorMessage = `HTTP Error ${response.status}: ${response.statusText}`;
+        let details = null;
+
+        if (data && typeof data === "object") {
+          const errEnvelope = data as Partial<ApiErrorResponse>;
+          if (errEnvelope.error) {
+            errorCode = errEnvelope.error.code || errorCode;
+            errorMessage = errEnvelope.error.message || errorMessage;
+            details = errEnvelope.error.details || null;
+          } else if ("detail" in (data as Record<string, unknown>)) {
+            const detail = (data as Record<string, unknown>).detail;
+            if (typeof detail === "object" && detail !== null) {
+              const d = detail as Record<string, unknown>;
+              errorCode = String(d.code || errorCode);
+              errorMessage = String(d.message || errorMessage);
+            } else if (typeof detail === "string") {
+              errorMessage = detail;
+            }
           }
         }
 
-        throw new ApiError(response.status, errorDetail);
+        throw new ApiError(errorMessage, errorCode, response.status, details);
       }
 
-      // Parse JSON response
-      return (await response.json()) as T;
-    } catch (err: unknown) {
+      return data as T;
+    } catch (error: unknown) {
       clearTimeout(timeoutId);
 
-      if (err instanceof ApiError) {
-        throw err;
+      if (error instanceof ApiError) {
+        throw error;
       }
 
-      if (err instanceof Error && err.name === "AbortError") {
-        throw new ApiError(408, {
-          code: "REQUEST_TIMEOUT",
-          message: "The request timed out while communicating with the backend.",
-        });
+      if (error instanceof Error && error.name === "AbortError") {
+        throw new ApiError(
+          "Request timed out. Please try again.",
+          "REQUEST_TIMEOUT",
+          408
+        );
       }
 
-      throw new ApiError(0, {
-        code: "NETWORK_ERROR",
-        message: "Unable to connect to the backend service. Please check your connection.",
-      });
+      throw new ApiError(
+        error instanceof Error ? error.message : "Network request failed.",
+        "NETWORK_ERROR",
+        500
+      );
     }
   }
 
-  // HTTP Method Helpers
-  async get<T>(endpoint: string, options: ApiClientOptions = {}): Promise<T> {
+  public async get<T>(endpoint: string, options: ApiClientOptions = {}): Promise<T> {
     return this.request<T>(endpoint, { ...options, method: "GET" });
   }
 
-  async post<T>(endpoint: string, body?: unknown, options: ApiClientOptions = {}): Promise<T> {
+  public async post<T>(
+    endpoint: string,
+    body: unknown,
+    options: ApiClientOptions = {}
+  ): Promise<T> {
     return this.request<T>(endpoint, {
       ...options,
       method: "POST",
-      body: body ? JSON.stringify(body) : undefined,
+      body: JSON.stringify(body),
     });
   }
 
-  async put<T>(endpoint: string, body?: unknown, options: ApiClientOptions = {}): Promise<T> {
-    return this.request<T>(endpoint, {
-      ...options,
-      method: "PUT",
-      body: body ? JSON.stringify(body) : undefined,
-    });
+  public async getHealth(): Promise<HealthResponse> {
+    return this.get<HealthResponse>("/health");
   }
 
-  async delete<T>(endpoint: string, options: ApiClientOptions = {}): Promise<T> {
-    return this.request<T>(endpoint, { ...options, method: "DELETE" });
+  public async getMe(token: string): Promise<MeResponse> {
+    return this.get<MeResponse>("/me", { token });
   }
 
-  // Predefined Contract Helpers
-  async getHealth(): Promise<HealthResponse> {
-    return this.get<HealthResponse>("/api/v1/health");
-  }
-
-  async getMe(token: string): Promise<MeResponse> {
-    return this.get<MeResponse>("/api/v1/me", { token });
-  }
-
-  async learnWithAI(
-    payload: AILearnRequest,
+  public async learnWithAI(
+    request: AILearnRequest,
     token: string
   ): Promise<AILearnResponse> {
-    return this.post<AILearnResponse>("/api/v1/ai/learn", payload, { token });
+    return this.post<AILearnResponse>("/ai/learn", request, { token });
   }
 
-  // Practice Engine Contract Helpers
-  async createPracticeSession(
-    payload: CreatePracticeSessionRequest,
+  public async createPracticeSession(
+    request: CreatePracticeSessionRequest,
     token: string
   ): Promise<PracticeSessionResponse> {
-    return this.post<PracticeSessionResponse>("/api/v1/practice/sessions", payload, { token });
+    return this.post<PracticeSessionResponse>("/practice/sessions", request, { token });
   }
 
-  async getPracticeSession(
+  public async getPracticeSession(
     sessionId: string,
     token: string
   ): Promise<PracticeSessionResponse> {
-    return this.get<PracticeSessionResponse>(`/api/v1/practice/sessions/${sessionId}`, { token });
+    return this.get<PracticeSessionResponse>(`/practice/sessions/${sessionId}`, { token });
   }
 
-  async submitPracticeAnswer(
+  public async submitPracticeAnswer(
     sessionId: string,
-    payload: SubmitAnswerRequest,
+    request: SubmitAnswerRequest,
     token: string
   ): Promise<AnswerEvaluationResponse> {
     return this.post<AnswerEvaluationResponse>(
-      `/api/v1/practice/sessions/${sessionId}/submit`,
-      payload,
+      `/practice/sessions/${sessionId}/submit`,
+      request,
+      { token }
+    );
+  }
+
+  public async createProofSession(
+    request: CreateProofSessionRequest,
+    token: string
+  ): Promise<ProofSessionResponse> {
+    return this.post<ProofSessionResponse>("/proof/sessions", request, { token });
+  }
+
+  public async getProofSession(
+    sessionId: string,
+    token: string
+  ): Promise<ProofSessionResponse> {
+    return this.get<ProofSessionResponse>(`/proof/sessions/${sessionId}`, { token });
+  }
+
+  public async submitProof(
+    sessionId: string,
+    request: SubmitProofRequest,
+    token: string
+  ): Promise<ProofSubmissionResponse> {
+    return this.post<ProofSubmissionResponse>(
+      `/proof/sessions/${sessionId}/submit`,
+      request,
       { token }
     );
   }
 }
 
-export const api = new ApiClient();
+export const api = new ApiClient(API_BASE_URL);

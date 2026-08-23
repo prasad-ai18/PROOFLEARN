@@ -2,6 +2,7 @@ from typing import Dict, List, Optional
 from fastapi import APIRouter, Depends, HTTPException, status
 from app.ai.router import ai_router
 from app.core.logging import logger
+from app.core.proof_guard import is_proof_mode_active
 from app.db.supabase import get_supabase
 from app.dependencies.auth import AuthenticatedUser, get_current_user
 from app.schemas.ai import AILearnRequest, AILearnResponse
@@ -118,7 +119,21 @@ async def learn_with_ai(
         difficulty = concept_entry["difficulty"]
         description = concept_entry["description"]
 
-    # 2. Format history
+    # 2. SERVER-SIDE PROOF MODE RESTRICTION
+    # If the student is actively in Proof Mode, AI assistance is strictly disabled.
+    if is_proof_mode_active(current_user.id, subject_slug, concept_slug):
+        logger.warning(
+            f"Blocked AI tutoring request: User [{current_user.id}] has active Proof Mode session for [{subject_slug}/{concept_slug}]"
+        )
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail={
+                "code": "AI_DISABLED_IN_PROOF_MODE",
+                "message": "AI assistance is strictly disabled during active Proof Mode sessions. Please complete your independent proof challenge to re-enable AI tutoring.",
+            },
+        )
+
+    # 3. Format history
     history_dicts: List[Dict[str, str]] = []
     if request.history:
         for item in request.history:
