@@ -1,7 +1,7 @@
 # PROOFLEARN Project Status
 
 ## Current Task
-TASK 12 — Transfer Challenge
+TASK 13 — Learning Evidence Engine + LEI
 
 ## Completed
 - **Task 01 (Project Foundation & Tooling)**:
@@ -84,12 +84,19 @@ TASK 12 — Transfer Challenge
   - Built full two-stage Proof & Transfer UI in [frontend/src/components/proof/proof-mode-room.tsx](file:///c:/Users/varap/Downloads/PROOFLEARN/frontend/src/components/proof/proof-mode-room.tsx).
   - Created automated test suite ([backend/tests/test_transfer.py](file:///c:/Users/varap/Downloads/PROOFLEARN/backend/tests/test_transfer.py)) verifying stage progression, AI lockout preservation, and IDOR protection.
   - Created Transfer Challenge documentation in [docs/TRANSFER_CHALLENGE.md](file:///c:/Users/varap/Downloads/PROOFLEARN/docs/TRANSFER_CHALLENGE.md).
+- **Task 13 (Learning Evidence Engine & LEI)**:
+  - Created modular backend service package ([backend/app/services/learning_evidence/](file:///c:/Users/varap/Downloads/PROOFLEARN/backend/app/services/learning_evidence/)): `models.py`, `scoring.py`, `engine.py`.
+  - Implemented transparent deterministic LEI scoring model ($15\% \text{ Recall} + 20\% \text{ Explanation} + 20\% \text{ Application} + 25\% \text{ Transfer} + 20\% \text{ Independence} - \text{Penalty}$).
+  - Added endpoint `GET /api/v1/proof/sessions/{session_id}/evidence` in [backend/app/api/v1/proof.py](file:///c:/Users/varap/Downloads/PROOFLEARN/backend/app/api/v1/proof.py) with stage checks (`EVIDENCE_NOT_READY`) and IDOR authorization.
+  - Built interactive Learning Evidence UI in [frontend/src/components/evidence/learning-evidence-view.tsx](file:///c:/Users/varap/Downloads/PROOFLEARN/frontend/src/components/evidence/learning-evidence-view.tsx) and dedicated route in [frontend/src/app/learn/[subjectSlug]/[conceptSlug]/evidence/page.tsx](file:///c:/Users/varap/Downloads/PROOFLEARN/frontend/src/app/learn/[subjectSlug]/[conceptSlug]/evidence/page.tsx).
+  - Included mandatory scientific disclaimer regarding prototype product metrics.
+  - Built comprehensive test suite in [backend/tests/test_evidence.py](file:///c:/Users/varap/Downloads/PROOFLEARN/backend/tests/test_evidence.py) (40 total backend tests passing).
+  - Created documentation in [docs/LEARNING_EVIDENCE.md](file:///c:/Users/varap/Downloads/PROOFLEARN/docs/LEARNING_EVIDENCE.md).
 
 ## Not Yet Implemented
-The following product features belong to subsequent tasks and are strictly omitted from Tasks 01–12:
-- Learning Evidence Index (LEI) Calculation Engine (Task 13)
-- Learning History & Analytics Dashboards
-- Production Cloudflare & Backend Deployment
+The following product features belong to subsequent tasks:
+- Learning History & Analytics Dashboards (Task 14)
+- Production Cloudflare & Backend Deployment (Future)
 
 ## Current Architecture
 ```
@@ -100,11 +107,12 @@ FastAPI Backend (Python 3.14 Authoritative Layer)
    │
    ├── Core Config (Pydantic Settings + Safe Logging)
    ├── Auth Dependency (Supabase JWT Verification)
-   ├── Proof Guard (Server-Side Multi-Stage Lockdown: Independent -> Transfer -> Complete)
+   ├── Proof Guard (Multi-Stage Lockdown: Independent -> Transfer -> Complete)
    ├── Practice Engine (Server-Side Evaluation & Safe Question Delivery)
    ├── AI Router (Google Gemini google-genai Provider)
-   └── Supabase PostgreSQL (12 tables + RLS + Transfer Challenges)
+   ├── Learning Evidence Engine (Pure Deterministic LEI Scoring + Signal Aggregation)
+   └── Supabase PostgreSQL (12 tables + RLS + Learning Evidence Ledger)
 ```
 
 ## Next Task
-TASK 13 — LEARNING EVIDENCE ENGINE + LEI
+TASK 14 — LEARNING HISTORY + POLISHED SAAS UX

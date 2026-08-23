@@ -14,6 +14,7 @@ import {
   TransferChallenge,
   SubmitTransferRequest,
   TransferSubmissionResponse,
+  LearningEvidenceResult,
   ApiClientOptions,
   ApiErrorResponse,
 } from "@/types/api";
@@ -244,6 +245,17 @@ class ApiClient {
       { token }
     );
   }
+
+  public async getLearningEvidence(
+    sessionId: string,
+    token: string
+  ): Promise<LearningEvidenceResult> {
+    return this.get<LearningEvidenceResult>(
+      `/proof/sessions/${sessionId}/evidence`,
+      { token }
+    );
+  }
 }
 
 export const api = new ApiClient(API_BASE_URL);
+

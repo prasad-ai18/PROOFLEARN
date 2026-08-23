@@ -30,7 +30,7 @@ All API endpoints follow uniform JSON serialization conventions.
 ```json
 {
   "error": {
-    "code": "VALIDATION_ERROR | UNAUTHORIZED | FORBIDDEN | NOT_FOUND | CONFLICT | INTERNAL_SERVER_ERROR",
+    "code": "VALIDATION_ERROR | UNAUTHORIZED | FORBIDDEN | NOT_FOUND | CONFLICT | EVIDENCE_NOT_READY | INTERNAL_SERVER_ERROR",
     "message": "Human-readable error explanation.",
     "details": null
   }
@@ -77,7 +77,14 @@ All API endpoints follow uniform JSON serialization conventions.
   - Stage Validation: Returns `400 Bad Request` if independent stage was not completed.
 - **Submit Transfer Challenge**: `POST /api/v1/proof/sessions/{session_id}/transfer`
   - Auth: Required (`Authorization: Bearer <token>`)
-  - Response (200 OK): Records transfer response, transitions session to `stage="completed"`, and unblocks AI tutoring. Resubmissions return `409 Conflict`.
+  - Response (200 OK): Records transfer response, transitions session to `stage="completed"`, and unblocks AI tutoring.
+
+### 3.6 Learning Evidence Engine & LEI (Task 13)
+- **Get Learning Evidence**: `GET /api/v1/proof/sessions/{session_id}/evidence`
+  - Auth: Required (`Authorization: Bearer <token>`)
+  - IDOR Protection: Returns `403 Forbidden` if accessed by an unauthorized user.
+  - Stage Enforcement: Returns `400 Bad Request` (`EVIDENCE_NOT_READY`) if Proof or Transfer challenge is incomplete.
+  - Deterministic Calculation: Computes LEI score ($0.0 - 100.0$), interpretation band, and signal breakdown.
 
 ---
 
@@ -85,11 +92,3 @@ All API endpoints follow uniform JSON serialization conventions.
 
 - **`RequestIdMiddleware`**: Generates and echoes `X-Request-ID` correlation headers.
 - **CORS Configuration**: Restricts origin access strictly to trusted frontend origins (`FRONTEND_URL`).
-
----
-
-## 5. Future Endpoint Map (Planned for Tasks 13–14)
-
-| Endpoint Prefix | Responsibility | Task |
-| :--- | :--- | :--- |
-| `/api/v1/evidence` | LEI score computation & verifiable record issuance | Task 13 |

@@ -143,6 +143,26 @@ export interface TransferSubmissionResponse {
   evaluation_signals?: Record<string, boolean>;
 }
 
+export interface SignalDetail {
+  name: string;
+  score?: number | null;
+  weight_percent: number;
+  status: string;
+  description: string;
+}
+
+export interface LearningEvidenceResult {
+  session_id: string;
+  concept_name: string;
+  subject_name: string;
+  lei_score: number;
+  interpretation: string;
+  is_evidence_available: boolean;
+  signals: Record<string, SignalDetail>;
+  generated_at: string;
+  disclaimer: string;
+}
+
 export interface ApiErrorDetail {
   code: string;
   message: string;
@@ -157,3 +177,4 @@ export interface ApiClientOptions extends RequestInit {
   timeoutMs?: number;
   token?: string | null;
 }
+

@@ -9,6 +9,7 @@ import {
 } from "@/types/api";
 import { api, ApiError } from "@/lib/api/client";
 import { createClient } from "@/lib/supabase/client";
+import { LearningEvidenceView } from "@/components/evidence/learning-evidence-view";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -35,7 +36,7 @@ interface ProofModeRoomProps {
 }
 
 export function ProofModeRoom({ subject, concept, onReturnToLearn }: ProofModeRoomProps) {
-  const [phase, setPhase] = useState<"intro" | "independent" | "transfer" | "completed">("intro");
+  const [phase, setPhase] = useState<"intro" | "independent" | "transfer" | "completed" | "evidence">("intro");
   const [session, setSession] = useState<ProofSessionResponse | null>(null);
 
   // Independent Challenge State
@@ -548,22 +549,36 @@ export function ProofModeRoom({ subject, concept, onReturnToLearn }: ProofModeRo
               )}
             </div>
 
-            {/* Learning Evidence Engine (Task 13 Placeholder) */}
+            {/* View Learning Evidence & LEI Result */}
             <div className="flex flex-col items-end w-full sm:w-auto">
               <Button
-                disabled
                 size="sm"
-                className="gap-2 text-xs bg-zinc-800 text-zinc-400 border border-dashed border-zinc-700 cursor-not-allowed w-full sm:w-auto"
-                title="Learning Evidence Index (LEI) will be calculated in Task 13"
+                onClick={() => setPhase("evidence")}
+                className="gap-2 text-xs bg-emerald-600 hover:bg-emerald-500 text-white shadow-md w-full sm:w-auto font-medium"
               >
-                <Sparkles className="w-3.5 h-3.5 text-indigo-400" />
+                <Sparkles className="w-3.5 h-3.5" />
                 <span>View Learning Evidence</span>
               </Button>
-              <span className="text-[10px] text-muted-foreground mt-1">LEI Engine unlocks in Task 13</span>
+              <span className="text-[10px] text-muted-foreground mt-1">Authoritative LEI record ready</span>
             </div>
           </CardFooter>
         </Card>
       </div>
+    );
+  }
+
+  // =====================================================================
+  // PHASE 5: LEARNING EVIDENCE VIEW
+  // =====================================================================
+  if (phase === "evidence" && session) {
+    return (
+      <LearningEvidenceView
+        sessionId={session.session_id}
+        subjectSlug={subject.slug}
+        conceptSlug={concept.slug}
+        onReturnToLearn={onReturnToLearn}
+        onReturnToProof={() => setPhase("completed")}
+      />
     );
   }
 

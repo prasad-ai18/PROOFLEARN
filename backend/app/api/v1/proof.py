@@ -18,6 +18,8 @@ from app.schemas.proof import (
     TransferChallenge,
     TransferSubmissionResponse,
 )
+from app.services.learning_evidence.engine import get_learning_evidence_for_session
+from app.services.learning_evidence.models import LearningEvidenceResult
 
 router = APIRouter(prefix="/proof", tags=["Proof Mode Engine"])
 
@@ -411,3 +413,46 @@ async def submit_transfer_challenge_route(
             status_code=status.HTTP_404_NOT_FOUND,
             detail={"code": "SESSION_NOT_FOUND", "message": f"Proof session '{session_id}' not found."},
         )
+
+
+@router.get(
+    "/sessions/{session_id}/evidence",
+    response_model=LearningEvidenceResult,
+    status_code=status.HTTP_200_OK,
+    summary="Get Learning Evidence & LEI",
+    description="Retrieves the authoritative Learning Evidence Index (LEI) and signal breakdown for a completed proof session.",
+)
+async def get_learning_evidence_route(
+    session_id: str,
+    current_user: AuthenticatedUser = Depends(get_current_user),
+) -> LearningEvidenceResult:
+    """
+    Computes and returns the transparent Learning Evidence Index (LEI) and component signals.
+    Requires that both independent and transfer challenges have been completed.
+    """
+    try:
+        evidence = get_learning_evidence_for_session(
+            session_id=session_id,
+            user_id=current_user.id,
+        )
+        return evidence
+    except PermissionError:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail={"code": "FORBIDDEN", "message": "You do not have permission to access evidence for this proof session."},
+        )
+    except ValueError as ve:
+        err = str(ve)
+        if err == "EVIDENCE_NOT_READY":
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail={
+                    "code": "EVIDENCE_NOT_READY",
+                    "message": "Learning evidence is not yet available. Complete your Proof and Transfer challenges to generate Learning Evidence.",
+                },
+            )
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail={"code": "SESSION_NOT_FOUND", "message": f"Proof session '{session_id}' not found."},
+        )
+
