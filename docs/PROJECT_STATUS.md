@@ -1,7 +1,7 @@
 # PROOFLEARN Project Status
 
 ## Current Task
-TASK 07 — FastAPI Backend Foundation
+TASK 08 — Frontend ↔ FastAPI Integration
 
 ## Completed
 - **Task 01 (Project Foundation & Tooling)**:
@@ -47,14 +47,19 @@ TASK 07 — FastAPI Backend Foundation
   - Built standardized response & error envelopes ([backend/app/schemas/common.py](file:///c:/Users/varap/Downloads/PROOFLEARN/backend/app/schemas/common.py)).
   - Implemented versioned API namespace `/api/v1` and health check ([backend/app/api/v1/health.py](file:///c:/Users/varap/Downloads/PROOFLEARN/backend/app/api/v1/health.py)).
   - Established Supabase server client provider ([backend/app/db/supabase.py](file:///c:/Users/varap/Downloads/PROOFLEARN/backend/app/db/supabase.py)) and JWT authentication verification dependency ([backend/app/dependencies/auth.py](file:///c:/Users/varap/Downloads/PROOFLEARN/backend/app/dependencies/auth.py)).
-  - Built automated pytest test suite (`test_health.py`, `test_auth.py`) passing with 100% success.
+  - Built automated pytest test suite (`test_health.py`, `test_auth.py`).
   - Created backend documentation ([docs/API.md](file:///c:/Users/varap/Downloads/PROOFLEARN/docs/API.md), [backend/README.md](file:///c:/Users/varap/Downloads/PROOFLEARN/backend/README.md)).
+- **Task 08 (Frontend ↔ FastAPI Integration)**:
+  - Created centralized frontend API client ([frontend/src/lib/api/client.ts](file:///c:/Users/varap/Downloads/PROOFLEARN/frontend/src/lib/api/client.ts)) supporting generic typed requests, timeouts, safe error envelopes, and Bearer JWT authorization.
+  - Created TypeScript API contract interfaces ([frontend/src/types/api.ts](file:///c:/Users/varap/Downloads/PROOFLEARN/frontend/src/types/api.ts)).
+  - Created authenticated backend endpoint `GET /api/v1/me` ([backend/app/api/v1/auth.py](file:///c:/Users/varap/Downloads/PROOFLEARN/backend/app/api/v1/auth.py)) protected by `Depends(get_current_user)` returning verified `MeResponse`.
+  - Added comprehensive backend tests verifying unauthenticated 401s, invalid token handling, and valid identity derivation.
+  - Created integration documentation in [docs/FRONTEND_BACKEND_INTEGRATION.md](file:///c:/Users/varap/Downloads/PROOFLEARN/docs/FRONTEND_BACKEND_INTEGRATION.md).
 
 ## Not Yet Implemented
-The following product features belong to subsequent tasks and are strictly omitted from Tasks 01–07:
-- Frontend ↔ FastAPI Integration (Task 08)
-- Real Learning Session State Creation (Task 09)
-- Gemini API integration & Socratic AI Router (Task 10)
+The following product features belong to subsequent tasks and are strictly omitted from Tasks 01–08:
+- AI Learning Room & Interactive Socratic Chat (Task 09)
+- Gemini API integration & AI Router implementation (Task 10)
 - Practice Engine (Task 11)
 - PROOF MODE Server-Side Lockdown Implementation (Task 12)
 - Transfer Challenge Engine (Task 13)
@@ -66,7 +71,7 @@ The following product features belong to subsequent tasks and are strictly omitt
 ```
 Next.js Frontend (TypeScript + Tailwind CSS + shadcn/ui + Supabase SSR Auth)
    │
-   ▼ (REST / JSON with Bearer JWT)
+   ▼ (REST / JSON with Bearer JWT via ApiClient)
 FastAPI Backend (Python 3.14 Authoritative Layer)
    │
    ├── Core Config (Pydantic Settings + Safe Logging)
@@ -77,4 +82,4 @@ FastAPI Backend (Python 3.14 Authoritative Layer)
 ```
 
 ## Next Task
-TASK 08 — Frontend ↔ FastAPI Integration
+TASK 09 — AI Learning Room

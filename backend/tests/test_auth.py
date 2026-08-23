@@ -10,65 +10,68 @@ sys.path.insert(0, str(backend_dir))
 
 from app.dependencies.auth import AuthenticatedUser, get_current_user
 from app.main import app
+from app.schemas.common import MeResponse
 
-
-class SubmissionPayload(BaseModel):
-    user_id: str
-    content: str
-
-
-# Create a test-only router with the auth dependency attached
-auth_test_router = APIRouter(prefix="/api/v1/test-auth")
-
-
-@auth_test_router.get("/protected")
-async def protected_endpoint(user: AuthenticatedUser = Depends(get_current_user)):
-    return {"status": "authenticated", "user_id": user.id, "email": user.email}
-
-
-@auth_test_router.post("/submit")
-async def submit_endpoint(
-    payload: SubmissionPayload,
-    user: AuthenticatedUser = Depends(get_current_user),
-):
-    return {"status": "submitted", "authenticated_user_id": user.id}
-
-
-app.include_router(auth_test_router)
 client = TestClient(app)
 
 
-def test_auth_missing_credentials():
+def test_me_endpoint_requires_auth():
     """
-    Assert that requests without Authorization header are rejected with 401.
+    Assert that GET /api/v1/me returns 401 when unauthenticated.
     """
-    response = client.get("/api/v1/test-auth/protected")
+    response = client.get("/api/v1/me")
     assert response.status_code == 401
     data = response.json()
     assert "error" in data
     assert data["error"]["code"] == "MISSING_CREDENTIALS"
 
 
-def test_auth_invalid_bearer_token():
+def test_me_endpoint_rejects_invalid_token():
     """
-    Assert that requests with invalid/malformed tokens are rejected with 401.
+    Assert that GET /api/v1/me returns 401 when presented with an invalid token.
     """
     response = client.get(
-        "/api/v1/test-auth/protected",
-        headers={"Authorization": "Bearer invalid_fake_token_12345"},
+        "/api/v1/me",
+        headers={"Authorization": "Bearer invalid-jwt-token-12345"},
     )
     assert response.status_code == 401
     data = response.json()
     assert "error" in data
 
 
+def test_me_endpoint_authenticated_success():
+    """
+    Assert that GET /api/v1/me returns verified user identity when dependency yields AuthenticatedUser.
+    """
+    mock_user = AuthenticatedUser(
+        user_id="test-uuid-9999-8888-7777",
+        email="student@prooflearn.app",
+        metadata={"full_name": "Test Student", "picture": "https://avatar.test/pic.png"},
+    )
+
+    # Apply FastAPI dependency override
+    app.dependency_overrides[get_current_user] = lambda: mock_user
+
+    try:
+        response = client.get("/api/v1/me", headers={"Authorization": "Bearer valid-mock-token"})
+        assert response.status_code == 200
+        data = response.json()
+        assert data["id"] == "test-uuid-9999-8888-7777"
+        assert data["email"] == "student@prooflearn.app"
+        assert data["authenticated"] is True
+        assert data["display_name"] == "Test Student"
+        assert data["avatar_url"] == "https://avatar.test/pic.png"
+    finally:
+        app.dependency_overrides.clear()
+
+
 def test_auth_rejects_spoofed_body_identity():
     """
     Assert that client-supplied user_id in payload cannot bypass the bearer token requirement.
     """
-    response = client.post(
-        "/api/v1/test-auth/submit",
-        json={"user_id": "spoofed-attacker-uuid-12345", "content": "hello world"},
+    response = client.get(
+        "/api/v1/me",
+        params={"user_id": "spoofed-attacker-uuid-12345"},
     )
     assert response.status_code == 401
     data = response.json()
@@ -76,7 +79,8 @@ def test_auth_rejects_spoofed_body_identity():
 
 
 if __name__ == "__main__":
-    test_auth_missing_credentials()
-    test_auth_invalid_bearer_token()
+    test_me_endpoint_requires_auth()
+    test_me_endpoint_rejects_invalid_token()
+    test_me_endpoint_authenticated_success()
     test_auth_rejects_spoofed_body_identity()
-    print("ALL AUTHENTICATION FOUNDATION TESTS PASSED SUCCESSFULLY!")
+    print("ALL AUTHENTICATION & /ME TESTS PASSED SUCCESSFULLY!")

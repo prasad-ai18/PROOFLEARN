@@ -14,6 +14,17 @@ class HealthResponse(BaseModel):
     environment: str = Field(default="development", description="Current runtime environment")
 
 
+class MeResponse(BaseModel):
+    """
+    Authenticated user identity verification response model.
+    """
+    id: str = Field(..., description="Authenticated user UUID derived strictly from verified JWT")
+    email: Optional[str] = Field(default=None, description="Authenticated user email")
+    authenticated: bool = Field(default=True, description="Confirmation of authenticated status")
+    display_name: Optional[str] = Field(default=None, description="User display name from metadata/profile")
+    avatar_url: Optional[str] = Field(default=None, description="User avatar URL")
+
+
 class ErrorDetail(BaseModel):
     """
     Structured error information.

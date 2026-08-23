@@ -39,7 +39,7 @@ All API endpoints follow uniform JSON serialization conventions.
 
 ---
 
-## 3. Endpoints Implemented in Task 07
+## 3. Endpoints Implemented
 
 ### 3.1 Health Check
 - **Route**: `GET /api/v1/health`
@@ -54,11 +54,26 @@ All API endpoints follow uniform JSON serialization conventions.
 }
 ```
 
-### 3.2 Service Root & Legacy Health Probes
+### 3.2 Authenticated Identity Verification
+- **Route**: `GET /api/v1/me`
+- **Auth**: Required (`Authorization: Bearer <token>`)
+- **Response**:
+```json
+{
+  "id": "user-uuid-string",
+  "email": "user@example.com",
+  "authenticated": true,
+  "display_name": "Learner",
+  "avatar_url": "https://example.com/avatar.png"
+}
+```
+- **Error**: Returns `401 Unauthorized` with `{"error": {"code": "MISSING_CREDENTIALS" | "INVALID_TOKEN", "message": "..."}}` if the token is missing or invalid.
+
+### 3.3 Service Root & Legacy Health Probes
 - `GET /`: Returns service identifier.
 - `GET /health`: Backward-compatible infrastructure health check probe.
 
-### 3.3 OpenAPI Documentation
+### 3.4 OpenAPI Documentation
 - Interactive Swagger UI: `http://localhost:8000/docs`
 - ReDoc UI: `http://localhost:8000/redoc`
 - OpenAPI JSON Specification: `http://localhost:8000/openapi.json`
@@ -102,12 +117,11 @@ sequenceDiagram
 
 ---
 
-## 6. Future Endpoint Map (Planned for Tasks 08–14)
+## 6. Future Endpoint Map (Planned for Tasks 09–14)
 
 | Endpoint Prefix | Responsibility | Task |
 | :--- | :--- | :--- |
-| `/api/v1/learning` | Learning session creation & state management | Task 08–09 |
-| `/api/v1/ai` | Socratic AI Router & message dispatch | Task 10 |
+| `/api/v1/ai` | Socratic AI Router & message dispatch (Gemini) | Task 09–10 |
 | `/api/v1/practice` | Formative practice evaluation & hints | Task 11 |
 | `/api/v1/proof` | Server-locked PROOF MODE verification | Task 12 |
 | `/api/v1/transfer` | Novel application challenge evaluation | Task 13 |
