@@ -10,30 +10,38 @@ PROOFLEARN is an AI-powered learning verification SaaS that bridges the gap betw
 
 ---
 
-## Current Status
-**TASK 01 — PROJECT FOUNDATION** (Completed)
-
-This repository currently contains the foundational architecture, development tooling, and healthcheck verification. Business logic, authentication, AI pipelines, and database schemas are strictly reserved for future tasks.
+## Technical Specifications & Documentation
+- **[System Architecture](file:///c:/Users/varap/Downloads/PROOFLEARN/docs/ARCHITECTURE.md)**: High-level topology, trust boundaries, sequence diagrams, and technology stack.
+- **[REST API Specification](file:///c:/Users/varap/Downloads/PROOFLEARN/docs/API_SPECIFICATION.md)**: `/api/v1` routes, standardized response envelopes, and error codes.
+- **[Domain Model](file:///c:/Users/varap/Downloads/PROOFLEARN/docs/DOMAIN_MODEL.md)**: Conceptual entities, ER diagram, relationships, and invariants.
+- **[Security Architecture](file:///c:/Users/varap/Downloads/PROOFLEARN/docs/SECURITY_ARCHITECTURE.md)**: Server-side PROOF MODE lockdown, Zero-Trust client boundary, and LEI integrity.
+- **[Project Status & Roadmap](file:///c:/Users/varap/Downloads/PROOFLEARN/docs/PROJECT_STATUS.md)**: Milestone tracking and completed tasks.
 
 ---
 
-## Architecture & Technology Stack
+## Current Status
+**TASK 02 — ARCHITECTURE & TECHNICAL SPECIFICATION** (Completed)
 
-### Communication Architecture
+Foundational technical architecture, REST API standards, domain entities, and security policies are formalized. Product features, database schemas, and AI integrations will be incrementally implemented in upcoming tasks.
+
+---
+
+## Architecture Overview
+
 ```
-Next.js (Frontend)
+User Browser
+   │
+   ▼ (HTTPS)
+Next.js Frontend (TypeScript + Tailwind CSS)
    │
    ▼ (REST / JSON)
-FastAPI (Backend)
+FastAPI Backend (Python 3.14 Authoritative Layer)
    │
-   ▼ (Future Services: Supabase, AI Router, Evaluation Engine)
+   ├── Supabase Auth (Google OAuth)
+   ├── Supabase PostgreSQL
+   ├── AI Router (Google Gemini + Fallback Provider)
+   └── Learning Evaluation Engine (scikit-learn & Rule Engine)
 ```
-
-### Stack Components
-- **Frontend**: Next.js (App Router), TypeScript, Tailwind CSS
-- **Backend**: Python 3, FastAPI, Uvicorn
-- **Documentation**: Markdown guides in `/docs`
-- **Version Control**: Git & GitHub (`prasad-ai18/PROOFLEARN`)
 
 ---
 
@@ -50,11 +58,17 @@ PROOFLEARN/
 ├── backend/              # FastAPI Python service
 │   ├── app/
 │   │   ├── __init__.py
-│   │   └── main.py       # FastAPI application entrypoint & endpoints
+│   │   └── main.py       # FastAPI application entrypoint & healthcheck
+│   ├── tests/
+│   │   └── test_health.py# Automated healthcheck test suite
 │   ├── requirements.txt  # Python dependencies
 │   ├── .env.example      # Backend environment template
 │   └── .venv/            # Python virtual environment (ignored by Git)
-├── docs/                 # Project documentation & milestones
+├── docs/                 # Architectural specifications
+│   ├── ARCHITECTURE.md   # System architecture & component design
+│   ├── API_SPECIFICATION.md # REST API conventions & endpoints
+│   ├── DOMAIN_MODEL.md   # Conceptual ER model & domain entities
+│   ├── SECURITY_ARCHITECTURE.md # Security boundaries & Proof Mode enforcement
 │   └── PROJECT_STATUS.md # Current state and roadmap tracker
 ├── .gitignore            # Root Git ignore rules
 └── README.md             # Project documentation
@@ -62,80 +76,29 @@ PROOFLEARN/
 
 ---
 
-## Prerequisites
-- **Node.js**: `v20+` (tested with `v24.15.0`)
-- **npm**: `v10+` (tested with `11.12.1`)
-- **Python**: `v3.11+` (tested with `3.14.2`)
-- **Git**: `2.x+` (tested with `2.54.0`)
-
----
-
 ## Getting Started
 
 ### 1. Backend Setup
 
-Navigate to the `backend/` directory:
 ```bash
 cd backend
-```
-
-Create and activate a virtual environment:
-```bash
-# Windows (PowerShell)
 python -m venv .venv
-.venv\Scripts\Activate.ps1
-
-# Linux / macOS
-python3 -m venv .venv
-source .venv/bin/activate
-```
-
-Install backend dependencies:
-```bash
+.\.venv\Scripts\Activate.ps1   # Windows PowerShell (or source .venv/bin/activate on Linux/macOS)
 pip install -r requirements.txt
-```
-
-Start the FastAPI development server:
-```bash
 uvicorn app.main:app --reload --port 8000
 ```
-
-The API will be available at: `http://localhost:8000`
-Healthcheck endpoint: `http://localhost:8000/health`
-Interactive Swagger Docs: `http://localhost:8000/docs`
-
----
+- API Base URL: `http://localhost:8000`
+- Healthcheck: `http://localhost:8000/health`
+- Swagger UI: `http://localhost:8000/docs`
 
 ### 2. Frontend Setup
 
-Navigate to the `frontend/` directory:
 ```bash
 cd frontend
-```
-
-Install frontend dependencies:
-```bash
 npm install
-```
-
-Start the Next.js development server:
-```bash
 npm run dev
 ```
-
-The frontend will be available at: `http://localhost:3000`
-
----
-
-## Environment Variables
-
-Copy the provided `.env.example` templates before setting custom local variables:
-
-- **Frontend**: `frontend/.env.example` -> `frontend/.env.local`
-- **Backend**: `backend/.env.example` -> `backend/.env`
-
-> [!CAUTION]
-> Never commit actual `.env` files or API secrets into version control.
+- Frontend URL: `http://localhost:3000`
 
 ---
 
