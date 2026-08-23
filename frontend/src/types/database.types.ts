@@ -1,8 +1,3 @@
-/**
- * PROOFLEARN Database Type Definitions
- * Represents the public PostgreSQL database schema managed via Supabase.
- */
-
 export type Json =
   | string
   | number
@@ -11,7 +6,7 @@ export type Json =
   | { [key: string]: Json | undefined }
   | Json[];
 
-export interface Database {
+export type Database = {
   public: {
     Tables: {
       profiles: {
@@ -36,6 +31,7 @@ export interface Database {
           created_at?: string;
           updated_at?: string;
         };
+        Relationships: [];
       };
       subjects: {
         Row: {
@@ -65,6 +61,7 @@ export interface Database {
           created_at?: string;
           updated_at?: string;
         };
+        Relationships: [];
       };
       concepts: {
         Row: {
@@ -100,6 +97,15 @@ export interface Database {
           created_at?: string;
           updated_at?: string;
         };
+        Relationships: [
+          {
+            foreignKeyName: "concepts_subject_id_fkey";
+            columns: ["subject_id"];
+            isOneToOne: false;
+            referencedRelation: "subjects";
+            referencedColumns: ["id"];
+          }
+        ];
       };
       learning_sessions: {
         Row: {
@@ -132,6 +138,22 @@ export interface Database {
           created_at?: string;
           updated_at?: string;
         };
+        Relationships: [
+          {
+            foreignKeyName: "learning_sessions_concept_id_fkey";
+            columns: ["concept_id"];
+            isOneToOne: false;
+            referencedRelation: "concepts";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "learning_sessions_user_id_fkey";
+            columns: ["user_id"];
+            isOneToOne: false;
+            referencedRelation: "profiles";
+            referencedColumns: ["id"];
+          }
+        ];
       };
       practice_attempts: {
         Row: {
@@ -173,6 +195,29 @@ export interface Database {
           feedback?: string | null;
           created_at?: string;
         };
+        Relationships: [
+          {
+            foreignKeyName: "practice_attempts_concept_id_fkey";
+            columns: ["concept_id"];
+            isOneToOne: false;
+            referencedRelation: "concepts";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "practice_attempts_session_id_fkey";
+            columns: ["session_id"];
+            isOneToOne: false;
+            referencedRelation: "learning_sessions";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "practice_attempts_user_id_fkey";
+            columns: ["user_id"];
+            isOneToOne: false;
+            referencedRelation: "profiles";
+            referencedColumns: ["id"];
+          }
+        ];
       };
       proof_attempts: {
         Row: {
@@ -214,6 +259,29 @@ export interface Database {
           status?: "started" | "submitted" | "evaluated";
           created_at?: string;
         };
+        Relationships: [
+          {
+            foreignKeyName: "proof_attempts_concept_id_fkey";
+            columns: ["concept_id"];
+            isOneToOne: false;
+            referencedRelation: "concepts";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "proof_attempts_session_id_fkey";
+            columns: ["session_id"];
+            isOneToOne: false;
+            referencedRelation: "learning_sessions";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "proof_attempts_user_id_fkey";
+            columns: ["user_id"];
+            isOneToOne: false;
+            referencedRelation: "profiles";
+            referencedColumns: ["id"];
+          }
+        ];
       };
       transfer_attempts: {
         Row: {
@@ -249,6 +317,29 @@ export interface Database {
           evaluation_notes?: string | null;
           created_at?: string;
         };
+        Relationships: [
+          {
+            foreignKeyName: "transfer_attempts_concept_id_fkey";
+            columns: ["concept_id"];
+            isOneToOne: false;
+            referencedRelation: "concepts";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "transfer_attempts_proof_attempt_id_fkey";
+            columns: ["proof_attempt_id"];
+            isOneToOne: false;
+            referencedRelation: "proof_attempts";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "transfer_attempts_user_id_fkey";
+            columns: ["user_id"];
+            isOneToOne: false;
+            referencedRelation: "profiles";
+            referencedColumns: ["id"];
+          }
+        ];
       };
       ai_interactions: {
         Row: {
@@ -287,6 +378,29 @@ export interface Database {
           assistant_response?: string;
           created_at?: string;
         };
+        Relationships: [
+          {
+            foreignKeyName: "ai_interactions_concept_id_fkey";
+            columns: ["concept_id"];
+            isOneToOne: false;
+            referencedRelation: "concepts";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "ai_interactions_session_id_fkey";
+            columns: ["session_id"];
+            isOneToOne: false;
+            referencedRelation: "learning_sessions";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "ai_interactions_user_id_fkey";
+            columns: ["user_id"];
+            isOneToOne: false;
+            referencedRelation: "profiles";
+            referencedColumns: ["id"];
+          }
+        ];
       };
       learning_evidence_results: {
         Row: {
@@ -337,7 +451,126 @@ export interface Database {
           interpretation?: string | null;
           created_at?: string;
         };
+        Relationships: [
+          {
+            foreignKeyName: "learning_evidence_results_proof_attempt_id_fkey";
+            columns: ["proof_attempt_id"];
+            isOneToOne: false;
+            referencedRelation: "proof_attempts";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "learning_evidence_results_session_id_fkey";
+            columns: ["session_id"];
+            isOneToOne: false;
+            referencedRelation: "learning_sessions";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "learning_evidence_results_transfer_attempt_id_fkey";
+            columns: ["transfer_attempt_id"];
+            isOneToOne: false;
+            referencedRelation: "transfer_attempts";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "learning_evidence_results_user_id_fkey";
+            columns: ["user_id"];
+            isOneToOne: false;
+            referencedRelation: "profiles";
+            referencedColumns: ["id"];
+          }
+        ];
       };
     };
+    Views: {
+      [_ in never]: never;
+    };
+    Functions: {
+      [_ in never]: never;
+    };
+    Enums: {
+      [_ in never]: never;
+    };
+    CompositeTypes: {
+      [_ in never]: never;
+    };
   };
-}
+};
+
+export type Tables<
+  PublicTableNameOrOptions extends
+    | keyof (Database["public"]["Tables"] & Database["public"]["Views"])
+    | { schema: keyof Database },
+  TableName extends PublicTableNameOrOptions extends { schema: keyof Database }
+    ? keyof (Database[PublicTableNameOrOptions["schema"]]["Tables"] &
+        Database[PublicTableNameOrOptions["schema"]]["Views"])
+    : never = never
+> = PublicTableNameOrOptions extends { schema: keyof Database }
+  ? (Database[PublicTableNameOrOptions["schema"]]["Tables"] &
+      Database[PublicTableNameOrOptions["schema"]]["Views"])[TableName] extends {
+      Row: infer R;
+    }
+    ? R
+    : never
+  : PublicTableNameOrOptions extends keyof (Database["public"]["Tables"] &
+      Database["public"]["Views"])
+  ? (Database["public"]["Tables"] &
+      Database["public"]["Views"])[PublicTableNameOrOptions] extends {
+      Row: infer R;
+    }
+    ? R
+    : never
+  : never;
+
+export type TablesInsert<
+  PublicTableNameOrOptions extends
+    | keyof Database["public"]["Tables"]
+    | { schema: keyof Database },
+  TableName extends PublicTableNameOrOptions extends { schema: keyof Database }
+    ? keyof Database[PublicTableNameOrOptions["schema"]]["Tables"]
+    : never = never
+> = PublicTableNameOrOptions extends { schema: keyof Database }
+  ? Database[PublicTableNameOrOptions["schema"]]["Tables"][TableName] extends {
+      Insert: infer I;
+    }
+    ? I
+    : never
+  : PublicTableNameOrOptions extends keyof Database["public"]["Tables"]
+  ? Database["public"]["Tables"][PublicTableNameOrOptions] extends {
+      Insert: infer I;
+    }
+    ? I
+    : never
+  : never;
+
+export type TablesUpdate<
+  PublicTableNameOrOptions extends
+    | keyof Database["public"]["Tables"]
+    | { schema: keyof Database },
+  TableName extends PublicTableNameOrOptions extends { schema: keyof Database }
+    ? keyof Database[PublicTableNameOrOptions["schema"]]["Tables"]
+    : never = never
+> = PublicTableNameOrOptions extends { schema: keyof Database }
+  ? Database[PublicTableNameOrOptions["schema"]]["Tables"][TableName] extends {
+      Update: infer U;
+    }
+    ? U
+    : never
+  : PublicTableNameOrOptions extends keyof Database["public"]["Tables"]
+  ? Database["public"]["Tables"][PublicTableNameOrOptions] extends {
+      Update: infer U;
+    }
+    ? U
+    : never
+  : never;
+
+export type Profile = Tables<"profiles">;
+export type Subject = Tables<"subjects">;
+export type Concept = Tables<"concepts">;
+export type LearningSession = Tables<"learning_sessions">;
+export type PracticeAttempt = Tables<"practice_attempts">;
+export type ProofAttempt = Tables<"proof_attempts">;
+export type TransferAttempt = Tables<"transfer_attempts">;
+export type AIInteraction = Tables<"ai_interactions">;
+export type LearningEvidenceResult = Tables<"learning_evidence_results">;

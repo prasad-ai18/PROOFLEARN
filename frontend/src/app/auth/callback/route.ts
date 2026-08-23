@@ -1,0 +1,57 @@
+import { NextResponse } from "next/server";
+import { createClient } from "@/lib/supabase/server";
+
+export async function GET(request: Request) {
+  const { searchParams, origin } = new URL(request.url);
+  const code = searchParams.get("code");
+  const rawNext = searchParams.get("next") || searchParams.get("redirectTo") || "/learn";
+
+  // Prevent open redirect vulnerabilities: Ensure next path is relative
+  const next = rawNext.startsWith("/") && !rawNext.startsWith("//") ? rawNext : "/learn";
+
+  if (code) {
+    const supabase = await createClient();
+    const { data, error } = await supabase.auth.exchangeCodeForSession(code);
+
+    if (!error && data.user) {
+      const user = data.user;
+      const metadata = user.user_metadata || {};
+      const displayName =
+        metadata.full_name ||
+        metadata.name ||
+        (user.email ? user.email.split("@")[0] : "Learner");
+      const avatarUrl = metadata.avatar_url || metadata.picture || null;
+
+      // Upsert profile record matching auth.users(id)
+      try {
+        await supabase.from("profiles").upsert(
+          {
+            id: user.id,
+            display_name: displayName,
+            avatar_url: avatarUrl,
+            updated_at: new Date().toISOString(),
+          },
+          { onConflict: "id" }
+        );
+      } catch (profileErr) {
+        console.error("Profile synchronization notice:", profileErr);
+      }
+
+      const forwardedHost = request.headers.get("x-forwarded-host");
+      const isLocalEnv = process.env.NODE_ENV === "development";
+
+      if (isLocalEnv) {
+        return NextResponse.redirect(`${origin}${next}`);
+      } else if (forwardedHost) {
+        return NextResponse.redirect(`https://${forwardedHost}${next}`);
+      } else {
+        return NextResponse.redirect(`${origin}${next}`);
+      }
+    } else {
+      console.error("OAuth exchange error:", error?.message);
+    }
+  }
+
+  // Return user to sign-in with error parameter if code exchange fails
+  return NextResponse.redirect(`${origin}/auth/sign-in?error=oauth_callback_failed`);
+}
