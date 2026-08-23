@@ -3,7 +3,7 @@
 > "Don't just get the answer. Prove you learned it."
 
 ## Product Description
-PROOFLEARN is an AI-powered learning verification SaaS that bridges the gap between AI-assisted comprehension and verifiable student mastery. Instead of replacing thinking, PROOFLEARN guides students through an interactive AI learning loop, tests understanding in a server-enforced **PROOF MODE** (with AI disabled), presents a novel transfer challenge, and generates a transparent **Learning Evidence Index (LEI)** with verifiable session evidence.
+PROOFLEARN is an AI-powered learning verification SaaS that bridges the gap between AI-assisted comprehension and verifiable student mastery. Instead of replacing thinking, PROOFLEARN guides students through an interactive AI learning loop, tests understanding in a server-enforced **PROOF MODE** (with AI disabled), presents a novel transfer challenge, generates a transparent **Learning Evidence Index (LEI)**, and maintains a private, student-owned **Learning History ledger**.
 
 ## Core Philosophy
 > "AI should help students learn, not replace their ability to think."
@@ -12,6 +12,7 @@ PROOFLEARN is an AI-powered learning verification SaaS that bridges the gap betw
 
 ## Technical Specifications & Documentation
 - **[System Architecture](file:///c:/Users/varap/Downloads/PROOFLEARN/docs/ARCHITECTURE.md)**: High-level topology, trust boundaries, sequence diagrams, and technology stack.
+- **[Learning History Architecture](file:///c:/Users/varap/Downloads/PROOFLEARN/docs/LEARNING_HISTORY.md)**: Student-owned proof ledger, pagination, status filtering, and returning-student continuity.
 - **[Learning Evidence Engine & LEI](file:///c:/Users/varap/Downloads/PROOFLEARN/docs/LEARNING_EVIDENCE.md)**: Transparent deterministic scoring formula, weights, interpretation bands, and scientific disclaimers.
 - **[Transfer Challenge Architecture](file:///c:/Users/varap/Downloads/PROOFLEARN/docs/TRANSFER_CHALLENGE.md)**: Stage 2 conceptual transfer (Same Concept + Novel Context), stage order enforcement, and evaluation signals.
 - **[Proof Mode Architecture](file:///c:/Users/varap/Downloads/PROOFLEARN/docs/PROOF_MODE.md)**: Server-locked independent challenge verification, zero AI assistance enforcement, and lifecycle states.
@@ -30,9 +31,9 @@ PROOFLEARN is an AI-powered learning verification SaaS that bridges the gap betw
 ---
 
 ## Current Status
-**TASK 13 — LEARNING EVIDENCE ENGINE + LEI** (Completed)
+**TASK 14 — LEARNING HISTORY + POLISHED SAAS UX** (Completed)
 
-Authoritative Learning Evidence Engine with deterministic LEI scoring ($15\% \text{ Recall} + 20\% \text{ Explanation} + 20\% \text{ Application} + 25\% \text{ Transfer} + 20\% \text{ Independence}$), server-side evaluation, interactive evidence screen, and automated test suite.
+Authoritative Learning History endpoint (`GET /api/v1/learning/history`) with pagination, status/subject filtering, returning-user experience, polished SaaS navigation, and automated test suite.
 
 ---
 
@@ -53,6 +54,7 @@ FastAPI Backend (Python 3.14 Authoritative Layer)
    ├── Practice Engine (Server-Side Evaluation & Safe Question Delivery)
    ├── AI Router (Google Gemini google-genai Provider)
    ├── Learning Evidence Engine (Pure Deterministic LEI Scoring + Signal Aggregation)
+   ├── Learning History Engine (Paginated Historical Ledger + Status Routing)
    └── Supabase PostgreSQL (12 tables + RLS + Learning Evidence Ledger)
 ```
 
@@ -77,6 +79,7 @@ uvicorn app.main:app --reload --port 8000
 - Proof Sessions: `http://localhost:8000/api/v1/proof/sessions`
 - Transfer Challenge: `http://localhost:8000/api/v1/proof/sessions/{id}/transfer`
 - Learning Evidence & LEI: `http://localhost:8000/api/v1/proof/sessions/{id}/evidence`
+- Learning History: `http://localhost:8000/api/v1/learning/history`
 - Swagger UI: `http://localhost:8000/docs`
 
 ### 2. Frontend Setup
@@ -89,5 +92,6 @@ npm run dev
 - Frontend URL: `http://localhost:3000`
 - Sign In: `http://localhost:3000/auth/sign-in`
 - Learning Catalog: `http://localhost:3000/learn`
+- Learning History: `http://localhost:3000/history`
 - AI Learning Room, Proof & Transfer: `http://localhost:3000/learn/python/functions`
 - Learning Evidence Result: `http://localhost:3000/learn/python/functions/evidence`

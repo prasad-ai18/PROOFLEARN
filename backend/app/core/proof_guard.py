@@ -177,3 +177,39 @@ def submit_transfer_challenge(
 
     logger.info(f"UNLOCKED: User [{user_id}] completed TRANSFER stage & finished Proof Mode session [{session_id}]")
     return session
+
+
+def get_user_proof_sessions(
+    user_id: str,
+    subject_slug: Optional[str] = None,
+    status_filter: Optional[str] = None,
+) -> list[Dict]:
+    """
+    Retrieves all proof sessions for a specific user, sorted newest first.
+    Filters by subject and status if specified.
+    """
+    user_sessions = [
+        session for session in PROOF_SESSIONS.values() if session["user_id"] == user_id
+    ]
+
+    if subject_slug:
+        target_subject = subject_slug.strip().lower()
+        user_sessions = [
+            s for s in user_sessions if s.get("subject_slug") == target_subject
+        ]
+
+    if status_filter:
+        target_status = status_filter.strip().lower()
+        if target_status in ("completed", "active"):
+            user_sessions = [
+                s for s in user_sessions if s.get("status") == target_status
+            ]
+        elif target_status == "in_progress":
+            user_sessions = [
+                s for s in user_sessions if s.get("status") == "active"
+            ]
+
+    # Sort newest first by started_at
+    user_sessions.sort(key=lambda s: s.get("started_at", ""), reverse=True)
+    return user_sessions
+

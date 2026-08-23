@@ -1,7 +1,7 @@
 # PROOFLEARN Project Status
 
 ## Current Task
-TASK 13 — Learning Evidence Engine + LEI
+TASK 14 — Learning History + Polished SaaS UX
 
 ## Completed
 - **Task 01 (Project Foundation & Tooling)**:
@@ -92,10 +92,16 @@ TASK 13 — Learning Evidence Engine + LEI
   - Included mandatory scientific disclaimer regarding prototype product metrics.
   - Built comprehensive test suite in [backend/tests/test_evidence.py](file:///c:/Users/varap/Downloads/PROOFLEARN/backend/tests/test_evidence.py) (40 total backend tests passing).
   - Created documentation in [docs/LEARNING_EVIDENCE.md](file:///c:/Users/varap/Downloads/PROOFLEARN/docs/LEARNING_EVIDENCE.md).
+- **Task 14 (Learning History + Polished SaaS UX)**:
+  - Built authoritative Learning History endpoint `GET /api/v1/learning/history` ([backend/app/api/v1/history.py](file:///c:/Users/varap/Downloads/PROOFLEARN/backend/app/api/v1/history.py)) with pagination, newest-first sorting, subject filtering, and IDOR isolation.
+  - Built reusable history cards ([frontend/src/components/history/learning-history-card.tsx](file:///c:/Users/varap/Downloads/PROOFLEARN/frontend/src/components/history/learning-history-card.tsx)), list view ([frontend/src/components/history/learning-history-list.tsx](file:///c:/Users/varap/Downloads/PROOFLEARN/frontend/src/components/history/learning-history-list.tsx)), and dedicated route ([frontend/src/app/history/page.tsx](file:///c:/Users/varap/Downloads/PROOFLEARN/frontend/src/app/history/page.tsx)).
+  - Polished SaaS navigation shell ([frontend/src/components/layout/header.tsx](file:///c:/Users/varap/Downloads/PROOFLEARN/frontend/src/components/layout/header.tsx)) with active route highlights for Learn and History.
+  - Created automated test suite in [backend/tests/test_history.py](file:///c:/Users/varap/Downloads/PROOFLEARN/backend/tests/test_history.py) (44 total backend tests passing).
+  - Created documentation in [docs/LEARNING_HISTORY.md](file:///c:/Users/varap/Downloads/PROOFLEARN/docs/LEARNING_HISTORY.md).
 
 ## Not Yet Implemented
-The following product features belong to subsequent tasks:
-- Learning History & Analytics Dashboards (Task 14)
+The following work belongs to future tasks:
+- Security Hardening & Secret Management (Task 15)
 - Production Cloudflare & Backend Deployment (Future)
 
 ## Current Architecture
@@ -111,8 +117,9 @@ FastAPI Backend (Python 3.14 Authoritative Layer)
    ├── Practice Engine (Server-Side Evaluation & Safe Question Delivery)
    ├── AI Router (Google Gemini google-genai Provider)
    ├── Learning Evidence Engine (Pure Deterministic LEI Scoring + Signal Aggregation)
+   ├── Learning History Engine (Paginated Historical Ledger + Status Routing)
    └── Supabase PostgreSQL (12 tables + RLS + Learning Evidence Ledger)
 ```
 
 ## Next Task
-TASK 14 — LEARNING HISTORY + POLISHED SAAS UX
+TASK 15 — SECURITY HARDENING + PRODUCTION CONFIGURATION

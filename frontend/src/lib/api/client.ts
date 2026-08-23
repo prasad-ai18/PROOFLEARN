@@ -15,6 +15,7 @@ import {
   SubmitTransferRequest,
   TransferSubmissionResponse,
   LearningEvidenceResult,
+  LearningHistoryResponse,
   ApiClientOptions,
   ApiErrorResponse,
 } from "@/types/api";
@@ -255,7 +256,28 @@ class ApiClient {
       { token }
     );
   }
+
+  public async getLearningHistory(
+    params: {
+      limit?: number;
+      offset?: number;
+      subject_slug?: string;
+      status?: string;
+    } = {},
+    token: string
+  ): Promise<LearningHistoryResponse> {
+    const query = new URLSearchParams();
+    if (params.limit !== undefined) query.set("limit", String(params.limit));
+    if (params.offset !== undefined) query.set("offset", String(params.offset));
+    if (params.subject_slug) query.set("subject_slug", params.subject_slug);
+    if (params.status) query.set("status", params.status);
+
+    const qs = query.toString();
+    const endpoint = `/learning/history${qs ? `?${qs}` : ""}`;
+    return this.get<LearningHistoryResponse>(endpoint, { token });
+  }
 }
 
 export const api = new ApiClient(API_BASE_URL);
+
 

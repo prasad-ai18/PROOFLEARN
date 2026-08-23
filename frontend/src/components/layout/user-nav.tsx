@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import Link from "next/link";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -11,7 +12,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 import { signOut } from "@/app/auth/actions";
-import { LogOut, ShieldCheck } from "lucide-react";
+import { LogOut, Compass, History } from "lucide-react";
 
 interface UserNavProps {
   user: {
@@ -55,9 +56,17 @@ export function UserNav({ user }: UserNavProps) {
           </div>
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
-        <DropdownMenuItem className="gap-2 text-xs text-muted-foreground cursor-default focus:bg-transparent">
-          <ShieldCheck className="h-3.5 w-3.5 text-emerald-400" />
-          <span>Verified Student</span>
+        <DropdownMenuItem asChild>
+          <Link href="/learn" className="flex w-full items-center gap-2 text-xs cursor-pointer">
+            <Compass className="h-3.5 w-3.5 text-emerald-400" />
+            <span>Curriculum Catalog</span>
+          </Link>
+        </DropdownMenuItem>
+        <DropdownMenuItem asChild>
+          <Link href="/history" className="flex w-full items-center gap-2 text-xs cursor-pointer">
+            <History className="h-3.5 w-3.5 text-indigo-400" />
+            <span>Learning History</span>
+          </Link>
         </DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuItem asChild>

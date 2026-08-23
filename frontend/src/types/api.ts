@@ -163,6 +163,29 @@ export interface LearningEvidenceResult {
   disclaimer: string;
 }
 
+export interface LearningHistoryItem {
+  session_id: string;
+  subject_slug: string;
+  concept_slug: string;
+  subject_name: string;
+  concept_name: string;
+  stage: string;
+  status: string;
+  started_at: string;
+  completed_at?: string | null;
+  evidence_available: boolean;
+  lei_score?: number | null;
+  interpretation?: string | null;
+}
+
+export interface LearningHistoryResponse {
+  items: LearningHistoryItem[];
+  total: number;
+  limit: number;
+  offset: number;
+  has_more: boolean;
+}
+
 export interface ApiErrorDetail {
   code: string;
   message: string;
@@ -177,4 +200,5 @@ export interface ApiClientOptions extends RequestInit {
   timeoutMs?: number;
   token?: string | null;
 }
+
 

@@ -2,7 +2,7 @@
 
 ## 1. Overview & Base Path
 
-The PROOFLEARN backend is an authoritative Python FastAPI service responsible for executing secure, verified learning sessions, AI routing, server-locked Proof Mode evaluations, and Learning Evidence Index (LEI) calculations.
+The PROOFLEARN backend is an authoritative Python FastAPI service responsible for executing secure, verified learning sessions, AI routing, server-locked Proof Mode evaluations, Learning Evidence Index (LEI) calculations, and student-owned Learning History.
 
 - **Base Namespace**: `/api/v1`
 - **Protocol**: HTTP/1.1 & HTTP/2 over TLS (REST + JSON)
@@ -85,6 +85,14 @@ All API endpoints follow uniform JSON serialization conventions.
   - IDOR Protection: Returns `403 Forbidden` if accessed by an unauthorized user.
   - Stage Enforcement: Returns `400 Bad Request` (`EVIDENCE_NOT_READY`) if Proof or Transfer challenge is incomplete.
   - Deterministic Calculation: Computes LEI score ($0.0 - 100.0$), interpretation band, and signal breakdown.
+
+### 3.7 Learning History & Sessions (Task 14)
+- **Get Learning History**: `GET /api/v1/learning/history`
+  - Auth: Required (`Authorization: Bearer <token>`)
+  - Query Parameters: `limit` (default: 20), `offset` (default: 0), `subject_slug`, `status` (`completed` | `in_progress`).
+  - IDOR Protection: Strictly scopes results to verified `current_user.id`.
+  - Ordering: Server-side sorted newest first by `started_at` descending.
+  - Response: Paginated `LearningHistoryResponse` container with session statuses and authoritative LEI scores.
 
 ---
 
