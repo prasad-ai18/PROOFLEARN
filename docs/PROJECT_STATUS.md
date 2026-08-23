@@ -1,7 +1,7 @@
 # PROOFLEARN Project Status
 
 ## Current Task
-TASK 15 — Security Hardening + Production Configuration
+TASK 16 — Automated Testing + End-to-End Validation
 
 ## Completed
 - **Task 01 (Project Foundation & Tooling)**:
@@ -105,29 +105,34 @@ TASK 15 — Security Hardening + Production Configuration
   - Hardened input length validation and SQL injection defense.
   - Created comprehensive security test suite in [backend/tests/test_security.py](file:///c:/Users/varap/Downloads/PROOFLEARN/backend/tests/test_security.py) (52 total backend tests passing 100%).
   - Created security audit documentation ([docs/SECURITY_AUDIT.md](file:///c:/Users/varap/Downloads/PROOFLEARN/docs/SECURITY_AUDIT.md)) and production readiness guide ([docs/PRODUCTION_READINESS.md](file:///c:/Users/varap/Downloads/PROOFLEARN/docs/PRODUCTION_READINESS.md)).
+- **Task 16 (Automated Testing + End-to-End Validation)**:
+  - Built full end-to-end pedagogical student journey backend test suite ([backend/tests/test_full_journey.py](file:///c:/Users/varap/Downloads/PROOFLEARN/backend/tests/test_full_journey.py)) covering all 10 stages.
+  - Built rate limiter unit test suite ([backend/tests/test_rate_limiter.py](file:///c:/Users/varap/Downloads/PROOFLEARN/backend/tests/test_rate_limiter.py)).
+  - Configured Playwright E2E test framework ([frontend/playwright.config.ts](file:///c:/Users/varap/Downloads/PROOFLEARN/frontend/playwright.config.ts)) and test suites ([frontend/tests/e2e/](file:///c:/Users/varap/Downloads/PROOFLEARN/frontend/tests/e2e/): `landing.spec.ts`, `navigation.spec.ts`, `responsive.spec.ts`).
+  - Total backend automated tests: **55 passed** in **2.46s**. Frontend builds cleanly with 0 errors and 0 warnings.
+  - Formalized complete testing specification in [docs/TESTING.md](file:///c:/Users/varap/Downloads/PROOFLEARN/docs/TESTING.md).
 
 ## Not Yet Implemented
 The following work belongs to future tasks:
-- Automated Testing + End-to-End Validation (Task 16)
 - Production Cloudflare & Backend Deployment (Task 17)
 
 ## Current Architecture
 ```
-Next.js Frontend (TypeScript + Tailwind CSS + shadcn/ui + Supabase SSR Auth + Security Headers)
+Next.js Frontend (TypeScript + Tailwind CSS + shadcn/ui + Playwright E2E + Supabase SSR Auth)
    │
    ▼ (REST / JSON with Bearer JWT via ApiClient + Security Headers)
-FastAPI Backend (Python 3.14 Authoritative Layer)
+FastAPI Backend (Python 3.14 Authoritative Layer + 55 Pytest Unit/Integration/E2E Tests)
    │
    ├── Core Config (Pydantic Settings + Safe Logging)
    ├── Security Middleware (RequestId, SecurityHeaders, RateLimiter)
    ├── Auth Dependency (Supabase JWT Verification)
    ├── Proof Guard (Multi-Stage Lockdown: Independent -> Transfer -> Complete)
    ├── Practice Engine (Server-Side Evaluation & Safe Question Delivery)
-   ├── AI Router (Google Gemini google-genai Provider + RateLimiting)
+   ├── AI Router (Google Gemini Provider with Mock Safe Test Isolation)
    ├── Learning Evidence Engine (Pure Deterministic LEI Scoring + Signal Aggregation)
    ├── Learning History Engine (Paginated Historical Ledger + Status Routing)
    └── Supabase PostgreSQL (12 tables + RLS + Learning Evidence Ledger)
 ```
 
 ## Next Task
-TASK 16 — AUTOMATED TESTING + END-TO-END VALIDATION
+TASK 17 — PRODUCTION DEPLOYMENT

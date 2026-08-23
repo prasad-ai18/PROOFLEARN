@@ -11,6 +11,7 @@ PROOFLEARN is an AI-powered learning verification SaaS that bridges the gap betw
 ---
 
 ## Technical Specifications & Documentation
+- **[Automated Testing & Validation Specification](file:///c:/Users/varap/Downloads/PROOFLEARN/docs/TESTING.md)**: Test pyramid, unit/integration/E2E suites, Playwright configuration, AI mocking strategy, and coverage.
 - **[Security Audit & Architecture Review](file:///c:/Users/varap/Downloads/PROOFLEARN/docs/SECURITY_AUDIT.md)**: Zero-Trust audit findings, secret scanning, RLS review, IDOR resistance, and security headers.
 - **[Production Readiness Guide](file:///c:/Users/varap/Downloads/PROOFLEARN/docs/PRODUCTION_READINESS.md)**: Environment variable matrices, CORS whitelist, Google OAuth setup, rate limiting, and operational notes.
 - **[System Architecture](file:///c:/Users/varap/Downloads/PROOFLEARN/docs/ARCHITECTURE.md)**: High-level topology, trust boundaries, sequence diagrams, and technology stack.
@@ -33,9 +34,9 @@ PROOFLEARN is an AI-powered learning verification SaaS that bridges the gap betw
 ---
 
 ## Current Status
-**TASK 15 — SECURITY HARDENING + PRODUCTION CONFIGURATION** (Completed)
+**TASK 16 — AUTOMATED TESTING + END-TO-END VALIDATION** (Completed)
 
-Zero secrets in bundles/Git, production security headers, in-memory rate limiting, server-locked Proof Mode defense, parameter-safe database queries, and comprehensive security test suite.
+55 backend tests passing (100% pass rate in 2.46s), Playwright E2E suites for landing, navigation, and responsive viewports, safe AI mocking, and comprehensive full student journey test.
 
 ---
 
@@ -44,18 +45,18 @@ Zero secrets in bundles/Git, production security headers, in-memory rate limitin
 ```
 User Browser
    │
-   ▼ (HTTPS / OAuth 2.0 PKCE + Security Headers)
+   ▼ (HTTPS / OAuth 2.0 PKCE + Playwright E2E Tests)
 Next.js Frontend (TypeScript + Tailwind CSS + shadcn/ui + Supabase SSR Auth)
    │
    ▼ (REST / JSON with Bearer JWT via ApiClient + Security Headers)
-FastAPI Backend (Python 3.14 Authoritative Layer)
+FastAPI Backend (Python 3.14 Authoritative Layer + 55 Pytest Unit/Integration/E2E Tests)
    │
    ├── Core Config (Pydantic Settings + Safe Logging)
    ├── Security Middleware (RequestId, SecurityHeaders, RateLimiter)
    ├── Auth Dependency (Supabase JWT Verification)
    ├── Proof Guard (Multi-Stage Lockdown: Independent -> Transfer -> Complete)
    ├── Practice Engine (Server-Side Evaluation & Safe Question Delivery)
-   ├── AI Router (Google Gemini google-genai Provider + RateLimiter)
+   ├── AI Router (Google Gemini Provider with Mock Safe Test Isolation)
    ├── Learning Evidence Engine (Pure Deterministic LEI Scoring + Signal Aggregation)
    ├── Learning History Engine (Paginated Historical Ledger + Status Routing)
    └── Supabase PostgreSQL (12 tables + RLS + Learning Evidence Ledger)
@@ -65,13 +66,14 @@ FastAPI Backend (Python 3.14 Authoritative Layer)
 
 ## Getting Started
 
-### 1. Backend Setup
+### 1. Backend Setup & Automated Tests
 
 ```bash
 cd backend
 python -m venv .venv
 .\.venv\Scripts\Activate.ps1   # Windows PowerShell (or source .venv/bin/activate on Linux/macOS)
 pip install -r requirements.txt
+.\.venv\Scripts\pytest.exe -v  # Run full automated test suite (55 tests)
 uvicorn app.main:app --reload --port 8000
 ```
 - API Base URL: `http://localhost:8000`
@@ -85,11 +87,14 @@ uvicorn app.main:app --reload --port 8000
 - Learning History: `http://localhost:8000/api/v1/learning/history`
 - Swagger UI: `http://localhost:8000/docs`
 
-### 2. Frontend Setup
+### 2. Frontend Setup & E2E Tests
 
 ```bash
 cd frontend
 npm install
+npm run lint
+npm run build
+npm run test:e2e
 npm run dev
 ```
 - Frontend URL: `http://localhost:3000`
