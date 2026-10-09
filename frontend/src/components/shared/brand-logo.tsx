@@ -27,10 +27,10 @@ export function BrandLogo({
   return (
     <div className={cn("inline-flex items-center gap-2.5 select-none", className)}>
       <div className="relative flex items-center justify-center">
-        {/* Modern Vector Proof Shield Mark */}
+        {/* Modern Vector Proof Shield Mark in Skyblue / Gold */}
         <div
           className={cn(
-            "rounded-lg bg-gradient-to-br from-emerald-400 via-emerald-500 to-teal-700 p-1.5 shadow-md flex items-center justify-center text-zinc-950",
+            "rounded-lg bg-sky-500 dark:bg-amber-500 text-white dark:text-black p-1.5 shadow-sm flex items-center justify-center transition-colors",
             iconSizes[size]
           )}
         >
@@ -41,7 +41,7 @@ export function BrandLogo({
             strokeWidth="2.5"
             strokeLinecap="round"
             strokeLinejoin="round"
-            className="w-full h-full text-zinc-950"
+            className="w-full h-full text-white dark:text-zinc-950"
             aria-hidden="true"
           >
             <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
@@ -51,13 +51,13 @@ export function BrandLogo({
       </div>
 
       <div className="flex flex-col">
-        <div className="flex items-center gap-1.5 font-bold">
-          <span className={cn("text-white font-black", textSizes[size])}>
-            PROOF<span className="text-emerald-400">LEARN</span>
+        <div className="flex items-center gap-1.5 font-bold leading-tight">
+          <span className={cn("text-slate-900 dark:text-white font-black", textSizes[size])}>
+            PROOF<span className="text-sky-600 dark:text-amber-400">LEARN</span>
           </span>
         </div>
         {showTagline && (
-          <span className="text-[10px] text-zinc-400 uppercase tracking-widest font-medium">
+          <span className="text-[10px] text-slate-500 dark:text-slate-400 uppercase tracking-widest font-medium">
             Verified Learning
           </span>
         )}

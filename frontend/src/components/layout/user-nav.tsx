@@ -17,6 +17,8 @@ import {
   LayoutDashboard,
   BookOpen,
   Trophy,
+  ShieldCheck,
+  User,
 } from "lucide-react";
 
 interface UserNavProps {
@@ -90,7 +92,25 @@ export function UserNav({ user }: UserNavProps) {
             className="flex w-full items-center gap-2 text-xs cursor-pointer"
           >
             <Trophy className="h-3.5 w-3.5 text-amber-400" />
-            <span>My Progress & Proofs</span>
+            <span>My Progress</span>
+          </Link>
+        </DropdownMenuItem>
+        <DropdownMenuItem asChild>
+          <Link
+            href="/proofs"
+            className="flex w-full items-center gap-2 text-xs cursor-pointer"
+          >
+            <ShieldCheck className="h-3.5 w-3.5 text-emerald-400" />
+            <span>Proof Ledger</span>
+          </Link>
+        </DropdownMenuItem>
+        <DropdownMenuItem asChild>
+          <Link
+            href="/profile"
+            className="flex w-full items-center gap-2 text-xs cursor-pointer"
+          >
+            <User className="h-3.5 w-3.5 text-purple-400" />
+            <span>My Profile</span>
           </Link>
         </DropdownMenuItem>
         <DropdownMenuSeparator />

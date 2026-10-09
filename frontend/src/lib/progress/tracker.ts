@@ -1,5 +1,29 @@
-import { COURSES, Course } from "@/lib/data/courses";
+import { COURSES, type Course, type Module, type Lesson } from "@/lib/data/courses";
 import { createClient } from "@/lib/supabase/client";
+
+export interface CourseCertificate {
+  certificateId: string;
+  courseSlug: string;
+  courseTitle: string;
+  category: string;
+  studentName: string;
+  grade: number; // e.g. 90
+  issuedAt: string;
+  badgeName: string;
+  badgeColor: string;
+  verificationHash: string;
+}
+
+export interface CourseExamAttempt {
+  courseSlug: string;
+  score: number;
+  total: number;
+  percentage: number;
+  passed: boolean;
+  timestamp: string;
+  studentName: string;
+  practicalTaskResponse?: string;
+}
 
 export interface LessonProgressState {
   completedLessons: string[]; // ["python/python-fundamentals/introduction-to-python", ...]
@@ -18,6 +42,8 @@ export interface LessonProgressState {
       response?: string;
     }
   >;
+  courseExamAttempts?: Record<string, CourseExamAttempt>;
+  certificates?: Record<string, CourseCertificate>;
   lastPosition: {
     courseSlug: string;
     moduleSlug: string;
@@ -40,6 +66,8 @@ export function getLocalProgress(): LessonProgressState {
       completedModules: [],
       practiceAttempts: {},
       proofAttempts: {},
+      courseExamAttempts: {},
+      certificates: {},
       lastPosition: null,
     };
   }
@@ -52,16 +80,29 @@ export function getLocalProgress(): LessonProgressState {
         completedModules: [],
         practiceAttempts: {},
         proofAttempts: {},
+        courseExamAttempts: {},
+        certificates: {},
         lastPosition: null,
       };
     }
-    return JSON.parse(raw);
+    const parsed = JSON.parse(raw);
+    return {
+      completedLessons: parsed.completedLessons || [],
+      completedModules: parsed.completedModules || [],
+      practiceAttempts: parsed.practiceAttempts || {},
+      proofAttempts: parsed.proofAttempts || {},
+      courseExamAttempts: parsed.courseExamAttempts || {},
+      certificates: parsed.certificates || {},
+      lastPosition: parsed.lastPosition || null,
+    };
   } catch {
     return {
       completedLessons: [],
       completedModules: [],
       practiceAttempts: {},
       proofAttempts: {},
+      courseExamAttempts: {},
+      certificates: {},
       lastPosition: null,
     };
   }
@@ -108,11 +149,11 @@ export async function markLessonComplete(
   }
 
   // Check if all lessons in the module are now complete
-  const course = COURSES.find((c) => c.slug === courseSlug);
+  const course = COURSES.find((c: Course) => c.slug === courseSlug);
   if (course) {
-    const mod = course.modules.find((m) => m.slug === moduleSlug);
+    const mod = course.modules.find((m: Module) => m.slug === moduleSlug);
     if (mod) {
-      const allLessonsDone = mod.lessons.every((l) =>
+      const allLessonsDone = mod.lessons.every((l: Lesson) =>
         state.completedLessons.includes(
           makeLessonKey(courseSlug, moduleSlug, l.slug)
         )
@@ -165,7 +206,7 @@ export async function markLessonComplete(
 }
 
 /**
- * Save a formative practice attempt result.
+ * Save a formative practice attempt result and sync to database.
  */
 export async function recordPracticeAttempt(
   courseSlug: string,
@@ -184,11 +225,36 @@ export async function recordPracticeAttempt(
   };
 
   saveLocalProgress(state);
+
+  // Background sync to Supabase database
+  try {
+    const supabase = createClient();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
+    if (user) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      await (supabase as any).from("user_proof_attempts").insert({
+        user_id: user.id,
+        course_slug: courseSlug,
+        module_slug: moduleSlug,
+        lesson_slug: lessonSlug,
+        score: Math.round((score / (total || 1)) * 100),
+        passed: score >= total * 0.7,
+        response: `Practice Quiz score: ${score}/${total}`,
+        created_at: new Date().toISOString(),
+      });
+    }
+  } catch (syncErr) {
+    console.debug("Notice: Practice attempt saved locally:", syncErr);
+  }
+
   return state;
 }
 
 /**
- * Save an authoritative Proof Mode challenge result.
+ * Save an authoritative Proof Mode challenge result and persist to database.
  */
 export async function recordProofAttempt(
   courseSlug: string,
@@ -216,8 +282,111 @@ export async function recordProofAttempt(
   }
 
   saveLocalProgress(state);
+
+  // Authoritative background sync to database
+  try {
+    const supabase = createClient();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
+    if (user) {
+      // 1. Record proof attempt
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      await (supabase as any).from("user_proof_attempts").insert({
+        user_id: user.id,
+        course_slug: courseSlug,
+        module_slug: moduleSlug,
+        lesson_slug: lessonSlug,
+        score: Math.round((score / (total || 1)) * 100),
+        passed,
+        response: response || `Proof challenge ${passed ? "passed" : "attempted"} with score ${score}/${total}`,
+        created_at: new Date().toISOString(),
+      });
+
+      // 2. If passed, mark lesson as completed in Supabase
+      if (passed) {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        await (supabase as any).from("user_lesson_progress").upsert(
+          {
+            user_id: user.id,
+            course_slug: courseSlug,
+            module_slug: moduleSlug,
+            lesson_slug: lessonSlug,
+            is_completed: true,
+            updated_at: new Date().toISOString(),
+          },
+          { onConflict: "user_id,course_slug,module_slug,lesson_slug" }
+        );
+      }
+    }
+  } catch (syncErr) {
+    console.debug("Notice: Proof attempt saved to local storage:", syncErr);
+  }
+
   return state;
 }
+
+/**
+ * Synchronizes student data bidirectionally between Supabase cloud database and local state.
+ * Called on login or profile load to guarantee multi-device persistence for students.
+ */
+export async function syncStudentDataToDatabase(): Promise<LessonProgressState> {
+  const local = getLocalProgress();
+  try {
+    const supabase = createClient();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
+    if (!user) return local;
+
+    // Fetch student's progress from cloud database
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const { data: dbProgress, error: progressErr } = await (supabase as any)
+      .from("user_lesson_progress")
+      .select("course_slug, module_slug, lesson_slug, is_completed")
+      .eq("user_id", user.id);
+
+    if (!progressErr && dbProgress && Array.isArray(dbProgress)) {
+      for (const row of dbProgress) {
+        if (row.is_completed) {
+          const key = makeLessonKey(row.course_slug, row.module_slug, row.lesson_slug);
+          if (!local.completedLessons.includes(key)) {
+            local.completedLessons.push(key);
+          }
+        }
+      }
+    }
+
+    // Push any offline completed lessons to Supabase
+    for (const key of local.completedLessons) {
+      const parts = key.split("/");
+      if (parts.length === 3) {
+        const [cSlug, mSlug, lSlug] = parts;
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        await (supabase as any).from("user_lesson_progress").upsert(
+          {
+            user_id: user.id,
+            course_slug: cSlug,
+            module_slug: mSlug,
+            lesson_slug: lSlug,
+            is_completed: true,
+            updated_at: new Date().toISOString(),
+          },
+          { onConflict: "user_id,course_slug,module_slug,lesson_slug" }
+        );
+      }
+    }
+
+    saveLocalProgress(local);
+  } catch (err) {
+    console.debug("Notice: Database synchronization deferred:", err);
+  }
+
+  return local;
+}
+
 
 /**
  * Calculate detailed progress stats for a specific course.
@@ -308,3 +477,80 @@ export function getOverallStatistics(state: LessonProgressState) {
     overallCompletion,
   };
 }
+
+/**
+ * Save course final certification exam result and issue certificate if passed.
+ */
+export function recordCourseExamAttempt(
+  attempt: CourseExamAttempt
+): LessonProgressState {
+  const state = getLocalProgress();
+  if (!state.courseExamAttempts) {
+    state.courseExamAttempts = {};
+  }
+  state.courseExamAttempts[attempt.courseSlug] = attempt;
+
+  if (attempt.passed) {
+    if (!state.certificates) {
+      state.certificates = {};
+    }
+    const course = COURSES.find((c) => c.slug === attempt.courseSlug);
+    const existing = state.certificates[attempt.courseSlug];
+    const randomSuffix = Math.floor(10000 + Math.random() * 90000);
+    const cleanSlug = attempt.courseSlug.replace(/[^a-zA-Z0-9]/g, "").toUpperCase().slice(0, 6);
+    const certId =
+      existing?.certificateId || `PLF-2026-${cleanSlug}-${randomSuffix}`;
+
+    state.certificates[attempt.courseSlug] = {
+      certificateId: certId,
+      courseSlug: attempt.courseSlug,
+      courseTitle: course?.title || attempt.courseSlug,
+      category: course?.category || "Computer Science",
+      studentName: attempt.studentName || "Certified Scholar",
+      grade: attempt.percentage,
+      issuedAt: new Date().toISOString(),
+      badgeName: `Certified ${course?.category || "Specialist"}`,
+      badgeColor: course?.badgeColor || "blue",
+      verificationHash: `verify.prooflearn.com/certs/${certId}`,
+    };
+  }
+
+  saveLocalProgress(state);
+  return state;
+}
+
+/**
+ * Update student name on an existing earned certificate.
+ */
+export function updateCourseCertificate(
+  courseSlug: string,
+  studentName: string
+): LessonProgressState {
+  const state = getLocalProgress();
+  if (state.certificates && state.certificates[courseSlug]) {
+    state.certificates[courseSlug].studentName = studentName;
+    saveLocalProgress(state);
+  }
+  return state;
+}
+
+/**
+ * Retrieve an earned certificate for a course slug.
+ */
+export function getCourseCertificate(
+  courseSlug: string
+): CourseCertificate | null {
+  const state = getLocalProgress();
+  return state.certificates?.[courseSlug] || null;
+}
+
+/**
+ * Retrieve a final exam attempt for a course slug.
+ */
+export function getCourseExamAttempt(
+  courseSlug: string
+): CourseExamAttempt | null {
+  const state = getLocalProgress();
+  return state.courseExamAttempts?.[courseSlug] || null;
+}
+

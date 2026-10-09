@@ -1,5 +1,6 @@
 import React from "react";
 import { redirect } from "next/navigation";
+import { cookies } from "next/headers";
 import { createClient } from "@/lib/supabase/server";
 import { getActiveSubjects } from "@/lib/data/subjects";
 import { getAllActiveConcepts } from "@/lib/data/concepts";
@@ -9,13 +10,27 @@ import { Badge } from "@/components/ui/badge";
 import { ShieldCheck, BookOpen } from "lucide-react";
 
 export default async function LearnPage() {
+  const cookieStore = await cookies();
+  const isGuest = cookieStore.get("prooflearn_guest")?.value === "true";
+  const rawUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const isSupabaseConfigured =
+    Boolean(rawUrl) && !rawUrl?.includes("your-project");
+
+  let user = null;
   const supabase = await createClient();
 
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  if (isSupabaseConfigured) {
+    try {
+      const {
+        data: { user: authUser },
+      } = await supabase.auth.getUser();
+      user = authUser;
+    } catch {
+      user = null;
+    }
+  }
 
-  if (!user) {
+  if (!user && !isGuest && isSupabaseConfigured) {
     redirect("/auth/sign-in?redirectTo=/learn");
   }
 

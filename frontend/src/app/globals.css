@@ -1,36 +1,74 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 @layer base {
-  :root {
-    --background: 240 10% 3.9%;
-    --foreground: 0 0% 98%;
 
-    --card: 240 10% 5.5%;
-    --card-foreground: 0 0% 98%;
+  :root,
+  html.dark {
+    /* Night Mode (Black & Gold)
+       Deep obsidian pitch-black canvas (#060608 / #0a0a0d) with luxurious shimmering Gold accents (#f59e0b / #fbbf24 / #eab308) */
+    --background: 0 0% 3.5%;
+    --foreground: 45 35% 96%;
 
-    --popover: 240 10% 5.5%;
-    --popover-foreground: 0 0% 98%;
+    --card: 0 0% 6.5%;
+    --card-foreground: 45 35% 96%;
 
-    --primary: 160 84% 39%;
-    --primary-foreground: 0 0% 100%;
+    --popover: 0 0% 6.5%;
+    --popover-foreground: 45 35% 96%;
 
-    --secondary: 240 3.7% 15.9%;
-    --secondary-foreground: 0 0% 98%;
+    --primary: 43 96% 50%; /* Radiant Gold #f59e0b */
+    --primary-foreground: 0 0% 4%;
 
-    --muted: 240 3.7% 15.9%;
-    --muted-foreground: 240 5% 64.9%;
+    --secondary: 45 32% 12%;
+    --secondary-foreground: 45 92% 82%;
 
-    --accent: 240 4% 18%;
-    --accent-foreground: 0 0% 98%;
+    --muted: 0 0% 11%;
+    --muted-foreground: 45 15% 65%;
+
+    --accent: 45 40% 14%;
+    --accent-foreground: 45 95% 72%;
 
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 0 0% 98%;
 
-    --border: 240 3.7% 15.9%;
-    --input: 240 3.7% 15.9%;
-    --ring: 160 84% 39%;
+    --border: 45 32% 19%; /* Rich burnished gold border */
+    --input: 45 32% 19%;
+    --ring: 43 96% 50%;
 
     --radius: 0.5rem;
+  }
+
+  html.light {
+    /* Day Mode (Sky Blue & White - Anti-glare, eye-soothing sky blue atmosphere)
+       Calming sky canvas (#eaf4fc) eliminates harsh blinding white glare while keeping cards pure white and text razor-sharp */
+    --background: 202 62% 95.5%; /* Calming sky blue tinted canvas #e8f3fc */
+    --foreground: 216 48% 13%; /* Deep navy slate #0e2038 for optimum readability */
+
+    --card: 0 0% 100%; /* Pure white floating cards */
+    --card-foreground: 216 48% 13%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 216 48% 13%;
+
+    --primary: 199 92% 46%; /* Sky Blue #0284c7 */
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 202 65% 92%; /* Gentle sky tint */
+    --secondary-foreground: 204 80% 22%;
+
+    --muted: 202 38% 91%;
+    --muted-foreground: 215 25% 38%;
+
+    --accent: 199 82% 91%;
+    --accent-foreground: 199 90% 32%;
+
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 0 0% 98%;
+
+    --border: 202 46% 84%; /* Soft sky-blue border */
+    --input: 202 46% 84%;
+    --ring: 199 92% 46%;
   }
 }
 
@@ -71,10 +109,44 @@ body {
   flex-direction: column;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  transition: background-color 0.25s ease, color 0.25s ease;
 }
 
 /* Accessible focus ring style */
 :focus-visible {
   outline: 2px solid hsl(var(--ring));
   outline-offset: 2px;
+}
+
+/* Eye-comfort background pattern */
+.eye-comfort-pattern {
+  background-size: 40px 40px;
+  background-image:
+    linear-gradient(to right, rgba(245, 158, 11, 0.05) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(245, 158, 11, 0.05) 1px, transparent 1px);
+}
+
+html.light .eye-comfort-pattern {
+  background-image:
+    linear-gradient(to right, rgba(2, 132, 199, 0.06) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(2, 132, 199, 0.06) 1px, transparent 1px);
+}
+
+/* Shimmer and luxury glow utility styles */
+.gold-glow {
+  box-shadow: 0 0 20px -3px rgba(245, 158, 11, 0.28);
+}
+
+.sky-glow {
+  box-shadow: 0 0 20px -3px rgba(2, 132, 199, 0.22);
+}
+
+.gold-border-glow {
+  border-color: rgba(245, 158, 11, 0.45);
+  box-shadow: 0 0 15px -2px rgba(245, 158, 11, 0.2);
+}
+
+.sky-border-glow {
+  border-color: rgba(2, 132, 199, 0.4);
+  box-shadow: 0 0 15px -2px rgba(2, 132, 199, 0.15);
 }

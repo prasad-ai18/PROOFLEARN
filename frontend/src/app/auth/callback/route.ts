@@ -6,10 +6,10 @@ export async function GET(request: Request) {
   const code = searchParams.get("code");
   const error = searchParams.get("error");
   const errorDescription = searchParams.get("error_description");
-  const rawNext = searchParams.get("next") || searchParams.get("redirectTo") || "/learn";
+  const rawNext = searchParams.get("next") || searchParams.get("redirectTo") || "/dashboard";
 
   // Prevent open redirect vulnerabilities: Ensure next path is relative
-  const next = rawNext.startsWith("/") && !rawNext.startsWith("//") ? rawNext : "/learn";
+  const next = rawNext.startsWith("/") && !rawNext.startsWith("//") ? rawNext : "/dashboard";
 
   // 1. Handle OAuth Provider Errors (e.g. redirect_uri_mismatch, access_denied)
   if (error || errorDescription) {

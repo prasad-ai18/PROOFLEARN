@@ -1,6 +1,7 @@
 import React from "react";
 import Link from "next/link";
 import { redirect } from "next/navigation";
+import { cookies } from "next/headers";
 import { createClient } from "@/lib/supabase/server";
 import { getSubjectAndConceptBySlugs } from "@/lib/data/concepts";
 import { AppShell } from "@/components/layout/app-shell";
@@ -18,14 +19,27 @@ interface ConceptPageProps {
 export default async function ConceptLearningPage({ params }: ConceptPageProps) {
   const { subjectSlug, conceptSlug } = await params;
 
+  const cookieStore = await cookies();
+  const isGuest = cookieStore.get("prooflearn_guest")?.value === "true";
+  const rawUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const isSupabaseConfigured =
+    Boolean(rawUrl) && !rawUrl?.includes("your-project");
+
+  let user = null;
   const supabase = await createClient();
 
-  // 1. Verify authenticated session server-side
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  if (isSupabaseConfigured) {
+    try {
+      const {
+        data: { user: authUser },
+      } = await supabase.auth.getUser();
+      user = authUser;
+    } catch {
+      user = null;
+    }
+  }
 
-  if (!user) {
+  if (!user && !isGuest && isSupabaseConfigured) {
     redirect(`/auth/sign-in?redirectTo=/learn/${subjectSlug}/${conceptSlug}`);
   }
 
@@ -58,12 +72,26 @@ export default async function ConceptLearningPage({ params }: ConceptPageProps) 
 
   const { subject, concept } = result;
 
-  const safeUserData = {
-    id: user.id,
-    email: user.email,
-    displayName: user.user_metadata?.full_name || user.user_metadata?.name || user.email?.split("@")[0] || "Learner",
-    avatarUrl: user.user_metadata?.avatar_url || user.user_metadata?.picture || null,
-  };
+  const safeUserData = user
+    ? {
+        id: user.id,
+        email: user.email,
+        displayName:
+          user.user_metadata?.full_name ||
+          user.user_metadata?.name ||
+          user.email?.split("@")[0] ||
+          "Learner",
+        avatarUrl:
+          user.user_metadata?.avatar_url ||
+          user.user_metadata?.picture ||
+          null,
+      }
+    : {
+        id: "guest-learner",
+        email: "guest@prooflearn.dev",
+        displayName: "Guest Learner",
+        avatarUrl: null,
+      };
 
   return (
     <AppShell>
