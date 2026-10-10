@@ -1,46 +1,92 @@
 # PROOFLEARN
 
-Website URL: https://prooflearn-xi.vercel.app/
+<div align="center">
 
-> **"Don't just get the answer. Prove you learned it."**
+**"Don't just get the answer. Prove you learned it."**
 
-[![CI Tests](https://img.shields.io/badge/tests-55%20passed-success)](docs/TESTING.md)
-[![TypeScript](https://img.shields.io/badge/frontend-Next.js%2016-blue)](frontend/)
-[![FastAPI](https://img.shields.io/badge/backend-FastAPI%200.115-009688)](backend/)
-[![PostgreSQL](https://img.shields.io/badge/database-Supabase%20PostgreSQL-3ECF8E)](supabase/)
-[![Security](https://img.shields.io/badge/security-Zero--Trust%20RLS-red)](docs/SECURITY.md)
+[![Live Application](https://img.shields.io/badge/Live%20App-prooflearn--xi.vercel.app-emerald?style=for-the-badge&logo=vercel)](https://prooflearn-xi.vercel.app/)
+[![Next.js](https://img.shields.io/badge/Frontend-Next.js%2016-blue?style=for-the-badge&logo=nextdotjs)](frontend/)
+[![FastAPI](https://img.shields.io/badge/Backend-FastAPI%200.115-009688?style=for-the-badge&logo=fastapi)](backend/)
+[![Python WASM](https://img.shields.io/badge/Playground-Pyodide%20WASM-yellow?style=for-the-badge&logo=webassembly)](frontend/src/lib/playground/)
+[![PostgreSQL](https://img.shields.io/badge/Database-Supabase%20Postgres-3ECF8E?style=for-the-badge&logo=supabase)](supabase/)
+[![Security](https://img.shields.io/badge/Security-Zero--Trust%20RLS-red?style=for-the-badge&logo=security)](docs/SECURITY.md)
+
+</div>
+
+---
+
+## 🌐 Live Deployments & Repository Links
+
+- **Live SaaS Platform**: [https://prooflearn-xi.vercel.app/](https://prooflearn-xi.vercel.app/)
+- **Backend API**: [https://prooflearn-api.onrender.com](https://prooflearn-api.onrender.com) *(FastAPI Container)*
+- **GitHub Repositories**:
+  - Main: [https://github.com/prasad-ai18/PROOFLEARN](https://github.com/prasad-ai18/PROOFLEARN)
+  - Upstream: [https://github.com/sathyabhamakatte-wq/PROOFLEARN](https://github.com/sathyabhamakatte-wq/PROOFLEARN)
 
 ---
 
 ## 1. Overview
 
-**PROOFLEARN** is an AI-powered learning verification SaaS that bridges the gap between AI-assisted comprehension and verifiable student mastery. While modern generative AI tools make obtaining correct answers effortless, true conceptual understanding requires independent recall, logical explanation, and novel application.
+**PROOFLEARN** is an enterprise-grade AI learning verification and credentialing SaaS platform that bridges the gap between AI-assisted comprehension and verifiable student mastery. While modern generative AI tools make obtaining correct answers effortless, true conceptual understanding requires independent recall, logical explanation, novel application, and hands-on synthesis.
 
-PROOFLEARN enforces an authoritative pedagogical loop: students explore concepts with a Socratic AI tutor, practice with formative guidance, and enter **PROOF MODE**—a server-locked environment where AI access is severed—to solve independent challenges, complete novel transfer scenarios, synthesize an objective **Learning Evidence Index (LEI)**, and build a private, student-owned **Learning History ledger**.
+PROOFLEARN enforces an authoritative pedagogical loop:
+1. **Explore** concepts with an interactive Socratic AI tutor.
+2. **Practice** with formative guidance and feedback.
+3. **Prove Mastery** in **PROOF MODE**—a server-locked environment where AI access is severed—solving independent challenges, completing novel transfer scenarios, and synthesizing an objective **Learning Evidence Index (LEI)**.
+4. **Compile Verified Proof**: Earn cryptographically signed proof certificates and embed verified credentials directly into an integrated ATS-optimized resume.
 
 ### Core Philosophy
 > *"AI should help students learn, not replace their ability to think."*
 
 ---
 
-## 2. The Problem
+## 2. Key Pillars & Feature Capabilities
 
-Generative AI models provide answers instantly. However:
-$$\text{Correct Answer} \ne \text{Independent Understanding}$$
+### 💻 1. Interactive Multi-Language Code Playground (11 Languages)
+A high-performance browser code studio featuring WebAssembly-powered execution, instant compilation simulation, standard input/output channels (`stdin`/`stdout`), and test suites:
+- **Python**: Real client-side **CPython 3.12 WebAssembly (Pyodide)** runtime + resilient built-in sandbox engine with complete standard library functions (`int`, `float`, `str`, `input`, `print`, `math`, `range`, `len`, `enumerate`, `zip`, list comprehensions, f-strings).
+- **C (GCC)**: GCC 13.2 / C17 compilation simulator with syntax checking and output stream decoding.
+- **C++ (G++)**: Modern C++20 engine supporting standard template library structures.
+- **Java (OpenJDK)**: OpenJDK 21 HotSpot simulation validating `public static void main` entrypoints and standard outputs.
+- **JavaScript (ES2024) & TypeScript (5.4)**: Sandboxed evaluation with custom console logging, syntax isolation, and type stripping.
+- **Rust (rustc)**: Rust 2021 edition engine with memory leak and borrow-checker simulation.
+- **Go (Golang)**: Concurrency and channel resolution simulation.
+- **SQL**: In-memory relational query evaluator rendering clean ASCII tabular results.
+- **Bash**: Terminal shell script interpreter.
+- **Verilog HDL**: IEEE-1364/2001 hardware description language testbench simulator.
+- **Integrated Coding Challenges**: Preset algorithm problems (Two Sum, Matrix Multiplication, Binary Search) with automated test case evaluation.
 
-When students rely exclusively on generative AI to solve coursework:
-- **Illusion of Competence**: Reading an AI-generated solution creates false confidence without neurological retention.
-- **Fragile Knowledge**: Students struggle when encountering slight variations or novel domain contexts.
-- **Evaluation Blindspots**: Educators and students lack verifiable evidence of whether the human or the AI solved the problem.
+### 📚 2. 207+ Active Real-World Course Catalog
+A comprehensive curriculum spanning all modern engineering and software disciplines:
+- **Computer Science & Systems**: C, C++, Rust, Go, Operating Systems, Computer Architecture, Distributed Systems.
+- **Web & Full-Stack Development**: React 19, Next.js 16, Vue, Svelte, Node.js, GraphQL, Microservices, WebSockets.
+- **Mobile Development**: Flutter, React Native, Swift & iOS, Kotlin & Android, Progressive Web Apps (PWAs).
+- **AI, ML & Data Science**: PyTorch, TensorFlow, Scikit-learn, Large Language Models (LLMs), LangChain, RAG architectures, Deep Learning.
+- **Cloud & DevOps**: Docker, Kubernetes, AWS, Google Cloud Platform (GCP), Terraform, CI/CD pipelines, Site Reliability Engineering.
+- **Cybersecurity & Hardware**: Network Defense, Ethical Hacking, Cryptography, Verilog HDL, Embedded Systems.
+- **Databases & Systems**: PostgreSQL, Redis, MongoDB, Neo4j, Apache Kafka, Vector Databases.
+
+### 🔒 3. Server-Enforced Proof Mode & Anti-Cheat
+Unlike client-side toggles that can be bypassed by inspecting browser elements, PROOFLEARN locks AI access at the backend API layer:
+- Direct API requests to `/api/v1/ai/learn` return `HTTP 403 Forbidden` while a proof session is active.
+- **Transfer Challenge Engine**: Tests beyond rote memorization by presenting the concept in a distinct, unfamiliar context.
+- **Transparent Learning Evidence Index (LEI)**: A deterministic mathematical model ($0.0 - 100.0$) combining recall, explanation, problem application, transfer, and independence signals.
+
+### 🏆 4. Cryptographic Proof Certificates & Proof Ledger
+- **Verifiable Proof Certificates**: Issued upon completing final exams with unique Verification IDs, issue dates, domain categorizations, and cryptographic authenticity badges.
+- **Immutable Proof Ledger**: Permanent record of student achievements, scores, and verified concepts.
+
+### 📄 5. Interactive Resume Builder with ATS Score Analyzer
+- **Real-Time ATS Scoring**: Instant scoring algorithm checking keyword density, action verbs, section hierarchy, and formatting compliance.
+- **One-Click Proof Integration**: Automatically pulls completed ProofLearn certificates and verified course masteries directly into your resume.
+- **Export Ready**: Clean, professional PDF and printable formats.
 
 ---
 
-## 3. The Solution
-
-PROOFLEARN replaces passive answer generation with an active, verifiable learning loop:
+## 3. The Pedagogical Loop
 
 ```
-    [1. LEARN]      Socratic AI Learning Room (AI Guidance Allowed)
+    [1. LEARN]      Socratic AI Learning Room (Interactive AI Guidance)
         │
         ▼
     [2. PRACTICE]   Formative Knowledge Check (Scaffolded Practice Questions)
@@ -59,34 +105,24 @@ PROOFLEARN replaces passive answer generation with an active, verifiable learnin
     [5. EVIDENCE]   Deterministic Learning Evidence Index (LEI) Synthesized
         │
         ▼
-    [6. HISTORY]    Immutable, Private Student Proof Ledger Recorded
+    [6. CERTIFY]    Cryptographic Certificate Issued + Added to ATS Resume
 ```
 
 ---
 
-## 4. Core Innovations
-
-1. **Server-Enforced Proof Mode**: Unlike client-side toggles that can be bypassed by inspecting browser elements, PROOFLEARN locks AI access at the backend API layer. Direct API requests to `/api/v1/ai/learn` return `403 Forbidden` while a proof session is active.
-2. **Transfer Challenge Engine**: Tests beyond rote memorization by presenting the concept in a distinct, unfamiliar context (e.g., applying Python function parameters to IoT greenhouse telemetry).
-3. **Transparent Learning Evidence Index (LEI)**: A deterministic mathematical model ($0.0 - 100.0$) combining recall, explanation, problem application, transfer, and independence signals.
-4. **Student-Owned History Ledger**: An authenticated, searchable ledger of verified learning attempts with complete evidence breakdowns.
-
----
-
-## 5. Live Demo & Production Architecture
-
-- **Frontend Deployment**: [`https://prooflearn.pages.dev`](https://prooflearn.pages.dev) *(Cloudflare Pages / Vercel)*
-- **Backend API**: [`https://prooflearn-api.onrender.com`](https://prooflearn-api.onrender.com) *(Containerized FastAPI)*
+## 4. System Architecture
 
 ```mermaid
 flowchart TD
     subgraph Client["Edge & Client Layer (HTTPS / TLS 1.3)"]
         User["End User Browser"]
-        CF["Cloudflare Edge (SSL / DDoS Protection / Anycast CDN)"]
+        VercelEdge["Vercel Anycast Edge CDN"]
     end
 
-    subgraph Frontend["Frontend Host (Cloudflare Pages / Vercel)"]
-        NextApp["Next.js App Router (Turbopack / SSR Cookies / Tailwind CSS v4)"]
+    subgraph Frontend["Frontend Platform (Next.js 16 / Turbopack)"]
+        NextApp["Next.js App Router (SSR, Server Actions, Tailwind CSS v4)"]
+        PyEngine["Pyodide WebAssembly Python Engine (Client-Side)"]
+        ATSScanner["Client ATS Resume Analyzer"]
     end
 
     subgraph Backend["Backend Host (FastAPI Container)"]
@@ -102,8 +138,10 @@ flowchart TD
         GeminiAPI["Google Gemini 2.5 Flash API (Server-Only)"]
     end
 
-    User -->|HTTPS| CF
-    CF --> NextApp
+    User -->|HTTPS| VercelEdge
+    VercelEdge --> NextApp
+    NextApp --> PyEngine
+    NextApp --> ATSScanner
     NextApp -->|Bearer JWT + HTTPS| API
     NextApp -->|OAuth PKCE| SupabaseAuth
     API --> SecMiddleware
@@ -115,23 +153,9 @@ flowchart TD
 
 ---
 
-## 6. Available Curriculum Subjects (MVP)
+## 5. Learning Evidence Index (LEI)
 
-The platform includes seed curriculum units covering foundational computer science and software development:
-
-| Subject | Slug | Foundational Concepts | Difficulty Tiers |
-| :--- | :--- | :--- | :--- |
-| **Python** | `python` | Variables & Types, Functions, Lists & Dictionaries | Beginner / Intermediate |
-| **Java** | `java` | Variables & Types, Methods, OOP Basics | Beginner / Intermediate |
-| **SQL** | `sql` | SELECT Queries, Table JOINs, Aggregations | Beginner / Intermediate |
-| **AI & Machine Learning** | `ai-ml` | Supervised Learning, Model Evaluation, Regularization | Intermediate / Advanced |
-| **Data Science** | `data-science` | Data Cleaning, Pandas DataFrames, Feature Engineering | Intermediate |
-
----
-
-## 7. Learning Evidence Index (LEI)
-
-The **Learning Evidence Index (LEI)** synthesizes multi-stage demonstration signals into a transparent, bounded metric:
+The **Learning Evidence Index (LEI)** synthesizes multi-stage demonstration signals into a transparent, bounded metric ($0.0 - 100.0$):
 
 $$\text{LEI} = \max\left(0.0, \min\left(100.0, \sum_{i=1}^{5} (w_i \cdot s_i) - \text{Penalty}\right)\right)$$
 
@@ -144,48 +168,50 @@ $$\text{LEI} = \max\left(0.0, \min\left(100.0, \sum_{i=1}^{5} (w_i \cdot s_i) - 
 | **AI Independence** | $20\%$ | Completing challenges without AI reliance |
 
 > [!NOTE]
-> **Scientific & Academic Disclaimer**
-> The Learning Evidence Index (LEI) is a prototype product metric representing demonstrated engagement and performance. It is **not** an IQ score, psychometric assessment, accredited academic credential, or replacement for formal evaluation.
+> **Academic & Scientific Disclaimer**: The Learning Evidence Index (LEI) is a product metric representing demonstrated engagement, rigor, and performance in our verified learning workflows. It is **not** an accredited university degree or psychometric assessment.
 
 ---
 
-## 8. Technology Stack
+## 6. Technology Stack
 
-- **Frontend**: Next.js 16 (App Router, Turbopack), TypeScript, Tailwind CSS v4, Radix UI / shadcn/ui primitives, Lucide icons.
-- **Backend**: FastAPI 0.115+, Python 3.12/3.14, Pydantic v2, Pydantic Settings, Uvicorn, HTTPX.
-- **Database & Auth**: Supabase PostgreSQL (12 relational tables with Row Level Security), Supabase Auth (Google OAuth 2.0 PKCE with SSR session cookies).
-- **AI Infrastructure**: Google Gemini 2.5 Flash via official `google-genai` SDK with abstract provider interface (`BaseAIProvider`).
-- **Testing & Validation**: Pytest (55 backend unit, integration, and security tests), Playwright (E2E browser tests).
-- **Containerization & Deployment**: Multi-stage `Dockerfile`, `docker-compose.yml`, Cloudflare Pages, Render / PaaS web services.
-
----
-
-## 9. Security & Trust Architecture
-
-- **Zero-Trust Client Boundary**: Client-supplied identities in request bodies or query params are ignored; user identity is derived strictly from verified Supabase JWT signatures.
-- **Row Level Security (RLS)**: Enforced across all 12 PostgreSQL tables, guaranteeing strict tenant isolation.
-- **IDOR Protection**: Every session access, answer submission, and evidence retrieval validates student ownership.
-- **Sliding-Window Rate Limiting**: In-memory rate limiting (10 req/min for AI endpoints, 60 req/min for general API) prevents abuse and quota exhaustion.
-- **Security Headers**: Production headers enforced (`X-Content-Type-Options: nosniff`, `X-Frame-Options: DENY`, `Referrer-Policy: strict-origin-when-cross-origin`, `Permissions-Policy`).
-- **Secret Isolation**: Zero frontend exposure of Gemini API keys or Supabase service-role credentials.
+| Layer | Technologies |
+| :--- | :--- |
+| **Frontend Framework** | **Next.js 16** (App Router, Turbopack, React 19, TypeScript) |
+| **Styling & Design System** | **Tailwind CSS v4**, Radix UI primitives, Lucide Icons |
+| **Code Execution Engine** | **Pyodide WebAssembly (CPython 3.12)** + Sandboxed Client Evaluators |
+| **Backend API** | **FastAPI 0.115+**, Python 3.12/3.14, Pydantic v2, Uvicorn, HTTPX |
+| **Database & Auth** | **Supabase PostgreSQL** (12 Tables with Row Level Security), **Google OAuth 2.0 PKCE** |
+| **AI Tutoring Engine** | **Google Gemini 2.5 Flash** via official `google-genai` SDK |
+| **Testing & Quality** | **Pytest** (55 passing backend tests), **Playwright** (End-to-End browser tests) |
+| **Deployments & DevOps** | **Vercel** (Frontend edge deployment), **Docker** (Containerized backend on Render) |
 
 ---
 
-## 10. Local Development Setup
+## 7. Local Development Setup
 
-### 10.1 Prerequisites
+### 7.1 Prerequisites
 - **Node.js**: v20.x or higher (`node -v`)
 - **Python**: v3.12 or v3.14 (`python --version`)
 - **Git**
-- **Supabase Account & Google Cloud Console** (for live OAuth)
 
-### 10.2 Clone Repository
+### 7.2 Clone Repository
 ```bash
 git clone https://github.com/prasad-ai18/PROOFLEARN.git
 cd PROOFLEARN
 ```
 
-### 10.3 Backend Setup
+### 7.3 Frontend Setup
+```bash
+cd frontend
+npm install
+cp .env.example .env.local
+
+# Run development server
+npm run dev
+```
+Open [http://localhost:3000](http://localhost:3000) in your browser.
+
+### 7.4 Backend Setup
 ```bash
 cd backend
 python -m venv .venv
@@ -198,129 +224,105 @@ pip install -r requirements.txt
 cp .env.example .env
 
 # Run automated tests
-.\.venv\Scripts\pytest.exe -v
+pytest -v
 
-# Start FastAPI development server
+# Start FastAPI server
 uvicorn app.main:app --reload --port 8000
 ```
-- Swagger UI: `http://localhost:8000/docs`
-- Healthcheck: `http://localhost:8000/api/v1/health`
-
-### 10.4 Frontend Setup
-```bash
-cd ../frontend
-npm install
-cp .env.example .env.local
-
-# Run Playwright E2E tests
-npm run test:e2e
-
-# Start Next.js development server
-npm run dev
-```
-- Web Application: `http://localhost:3000`
+- Swagger API Docs: [http://localhost:8000/docs](http://localhost:8000/docs)
+- Healthcheck: [http://localhost:8000/api/v1/health](http://localhost:8000/api/v1/health)
 
 ---
 
-## 11. Testing & Verification
+## 8. Automated Testing & Verification
 
-The project includes an automated test pyramid with **55 passing backend tests** and Playwright frontend specs:
+The repository includes a comprehensive test suite covering unit, integration, security, and end-to-end user journeys:
 
 ```bash
-# Run backend test suite (Unit, Integration, Security, Full Journey)
+# Backend test suite (55 tests: Auth, ProofGuard, LEI Engine, Security)
 cd backend
-.\.venv\Scripts\pytest.exe -v
+pytest -v
 
-# Run frontend linting & production build validation
+# Frontend linting and production build verification
 cd ../frontend
 npm run lint
 npm run build
 
-# Run Playwright E2E browser tests
+# Playwright E2E browser tests
 npm run test:e2e
 ```
 
-For complete test plans and execution matrices, see [docs/TESTING.md](docs/TESTING.md).
-
 ---
 
-## 12. Project Structure
+## 9. Project Directory Structure
 
 ```
 PROOFLEARN/
-├── backend/
-│   ├── app/
-│   │   ├── ai/                      # AI provider router & Google Gemini integration
-│   │   ├── api/v1/                  # Versioned API routes (auth, ai, practice, proof, history)
-│   │   ├── core/                    # Settings, logging, ProofGuard, rate limiter
-│   │   ├── db/                      # Supabase client provider
-│   │   ├── dependencies/            # JWT authentication dependency
-│   │   ├── middleware/              # Security headers & Request-ID middleware
-│   │   ├── schemas/                 # Pydantic v2 domain & API contract models
-│   │   └── services/                # Deterministic Learning Evidence Engine
-│   ├── tests/                       # 55 automated Pytest unit, integration & security tests
-│   ├── Dockerfile                   # Production multi-stage Python container
-│   ├── Procfile                     # PaaS deployment start configuration
-│   └── requirements.txt             # Pinned backend dependencies
-├── frontend/
+├── frontend/                        # Next.js 16 Web Application
 │   ├── src/
-│   │   ├── app/                     # Next.js App Router routes (/, /learn, /history, /auth)
-│   │   ├── components/              # UI components (AI room, practice, proof, evidence, layout)
-│   │   ├── lib/                     # Supabase SSR clients, API REST client, data catalog
-│   │   └── types/                   # TypeScript database & API interfaces
-│   ├── tests/e2e/                   # Playwright E2E test specs (landing, navigation, responsive)
-│   ├── Dockerfile                   # Standalone frontend production container
-│   └── package.json                 # Pinned frontend dependencies
+│   │   ├── app/                     # Next.js App Router
+│   │   │   ├── code-playground/     # 11-Language WebAssembly Code Playground
+│   │   │   ├── courses/             # 207+ Course Catalog, Modules, Tests & Certificates
+│   │   │   ├── resume-builder/      # ATS Resume Builder with Score Analyzer
+│   │   │   ├── proofs/              # Verified Proof Ledger
+│   │   │   ├── learn/               # Socratic AI Learning Room & Evidence View
+│   │   │   └── dashboard/           # Student Progress & Mastery Dashboard
+│   │   ├── components/              # UI Component Library (AppShell, Cards, Dialogs)
+│   │   ├── lib/                     # Playwright runner, Pyodide WASM bridge, Supabase client
+│   │   └── types/                   # TypeScript interfaces (Course, Proof, Language)
+│   ├── tests/e2e/                   # Playwright E2E browser test specs
+│   └── package.json                 # Frontend dependencies and build scripts
+├── backend/                         # FastAPI 0.115+ Backend
+│   ├── app/
+│   │   ├── ai/                      # AI provider abstraction & Gemini 2.5 Flash
+│   │   ├── api/v1/                  # Endpoints (auth, ai, practice, proof, history)
+│   │   ├── core/                    # Settings, ProofGuard, sliding-window rate limiter
+│   │   ├── db/                      # Supabase client & connection pools
+│   │   ├── middleware/              # Security headers, Request-ID tracing
+│   │   ├── schemas/                 # Pydantic v2 schemas and request contracts
+│   │   └── services/                # Deterministic Learning Evidence Engine (LEI)
+│   ├── tests/                       # 55 Pytest unit, integration & security tests
+│   ├── Dockerfile                   # Multi-stage production container
+│   └── requirements.txt             # Pinned Python dependencies
 ├── supabase/
-│   └── migrations/                  # 5 PostgreSQL schema & curriculum seed migrations
-├── docs/                            # Comprehensive technical documentation
-│   ├── ARCHITECTURE.md              # System topology & component boundaries
-│   ├── API.md                       # REST API specification & request/response contracts
-│   ├── SECURITY.md                  # Zero-Trust security review & controls
-│   ├── TESTING.md                   # Automated testing specification & coverage
-│   ├── DEPLOYMENT.md                # Cloudflare & container deployment guide
+│   └── migrations/                  # PostgreSQL schema, seed courses & RLS policies
+├── docs/                            # Comprehensive Technical Documentation
+│   ├── ARCHITECTURE.md              # System architecture & trust boundaries
+│   ├── API.md                       # Full REST API specification
+│   ├── SECURITY.md                  # Zero-Trust security review & RLS policies
+│   ├── TESTING.md                   # Automated testing matrix & coverage
 │   ├── LEI.md                       # Learning Evidence Index mathematical model
-│   └── PROJECT_STATUS.md            # Milestone roadmap & task completion logs
+│   └── DEPLOYMENT.md                # Deployment guide & environment settings
 ├── docker-compose.yml               # Local full-stack container orchestration
-├── CONTRIBUTING.md                  # Contributor guidelines & code standards
-├── CODE_OF_CONDUCT.md               # Contributor Covenant Code of Conduct
-└── README.md                        # Master project documentation
+├── CONTRIBUTING.md                  # Contribution guidelines
+├── CODE_OF_CONDUCT.md               # Code of Conduct
+└── README.md                        # Master Project Documentation
 ```
 
 ---
 
-## 13. Comprehensive Documentation Index
+## 10. Roadmap & Milestones
 
-- **[System Architecture](docs/ARCHITECTURE.md)**: High-level topology, trust boundaries, sequence diagrams, and technology stack.
-- **[REST API Specification](docs/API.md)**: Complete `/api/v1` routes, standardized envelopes, request bodies, and error codes.
-- **[Security & Trust Specification](docs/SECURITY.md)**: Zero-Trust architecture, RLS policies, IDOR protection, Proof Guard, and rate limiting.
-- **[Learning Evidence Index (LEI)](docs/LEI.md)**: Mathematical formulas, signal weights, interpretation bands, and academic disclaimers.
-- **[Automated Testing Specification](docs/TESTING.md)**: Test pyramid, AI mocking strategy, pytest execution, and Playwright E2E suites.
-- **[Production Deployment Guide](docs/DEPLOYMENT.md)**: Cloudflare Pages, containerized FastAPI, environment variable matrices, and rollback plans.
-- **[Database Schema Documentation](docs/DATABASE_SCHEMA.md)**: PostgreSQL table schemas, constraints, RLS policies, and seed data.
-- **[Project Status & Roadmap](docs/PROJECT_STATUS.md)**: Milestone tracking across all completed tasks.
-
----
-
-## 14. Roadmap & Future Work
-
-- [ ] **Expanded Curriculum**: Additional subjects (Rust, TypeScript, Algorithms, System Design).
-- [ ] **Adaptive Transfer Scenarios**: Dynamic LLM-assisted generation of novel transfer prompts with deterministic rule evaluation.
-- [ ] **Institutional & Educator Dashboards**: Batch student cohort analytics and aggregate learning progression insights.
-- [ ] **Interactive Code Execution Sandbox**: WebAssembly / Pyodide browser-isolated runtime for real-time unit test verification in Proof Mode.
-- [ ] **OpenID Connect (OIDC) Enterprise SSO**: Integration with institutional identity providers (Canvas, Blackboard, Google Classroom).
+- [x] **Core Socratic Learning Room**: Dynamic AI tutoring with Google Gemini 2.5 Flash.
+- [x] **Server-Side Proof Mode**: HTTP 403 lockdown during proof evaluations.
+- [x] **Interactive Code Playground**: Multi-language execution with WebAssembly Pyodide (Python 3.12), C, C++, Java, Rust, Go, SQL, Bash, and Verilog.
+- [x] **Massive Curriculum Expansion**: 207+ full-fledged courses across all engineering domains.
+- [x] **Verified Certificates & Ledger**: Cryptographically verifiable credentials with QR code validation.
+- [x] **ATS Resume Builder**: Integrated resume compiler with real-time ATS scoring and verified proof importing.
+- [ ] **Institutional Cohort Analytics**: Educator gradebooks and aggregate learning progression insights.
+- [ ] **Enterprise OIDC SSO**: Integration with Canvas, Blackboard, and Google Classroom.
 
 ---
 
-## 15. Privacy & Data Ethics
+## 11. Security & Privacy
 
-- **Identity Isolation**: Student identities are authenticated via Google OAuth; only standard profile metadata (name, email, avatar) is stored.
-- **Learning Telemetry**: Learning interaction records, practice attempts, and proof solutions are securely stored in PostgreSQL under strict tenant RLS.
-- **AI Transmission**: AI prompts are processed exclusively through server-side backend routing with rate-limited, sanitized payloads.
-- **No Third-Party Tracking**: The platform contains zero third-party behavioral analytics trackers or advertising SDKs.
+- **Zero-Trust Client Boundary**: Client-supplied identities are ignored; user identity is derived strictly from verified Supabase JWT signatures.
+- **Row Level Security (RLS)**: Enforced across all PostgreSQL tables, guaranteeing strict tenant data isolation.
+- **Secret Isolation**: Zero client-side exposure of Google Gemini or Supabase service-role keys.
+- **Privacy First**: No third-party behavioral trackers or advertising cookies.
 
 ---
 
-## 16. License
+## 12. License
 
-License selection requires project-owner decision. All rights reserved.
+All rights reserved. © 2026 PROOFLEARN Team.
