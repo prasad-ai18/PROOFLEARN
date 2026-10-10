@@ -9,7 +9,7 @@ import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { SUPPORTED_LANGUAGES } from "@/lib/playground/languages";
 import { CODING_CHALLENGES } from "@/lib/playground/challenges";
-import { executeCode } from "@/lib/playground/runner";
+import { executeCode, preloadPyodide } from "@/lib/playground/runner";
 import {
   SupportedLanguage,
   ExecutionResult,
@@ -51,6 +51,11 @@ export default function CodePlaygroundPage() {
   const activeLang =
     SUPPORTED_LANGUAGES.find((l) => l.id === selectedLangId) ||
     SUPPORTED_LANGUAGES[0];
+
+  // Preload Python Pyodide runtime in background
+  useEffect(() => {
+    preloadPyodide();
+  }, []);
 
   // Set default code when language changes
   useEffect(() => {
@@ -105,6 +110,16 @@ export default function CodePlaygroundPage() {
       });
     } finally {
       setIsRunning(false);
+    }
+  };
+
+  // Keyboard shortcut Ctrl+Enter or Cmd+Enter to execute code
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if ((e.ctrlKey || e.metaKey) && e.key === "Enter") {
+      e.preventDefault();
+      if (!isRunning) {
+        handleRun();
+      }
     }
   };
 
@@ -353,6 +368,7 @@ export default function CodePlaygroundPage() {
               <textarea
                 value={code}
                 onChange={(e) => setCode(e.target.value)}
+                onKeyDown={handleKeyDown}
                 spellCheck={false}
                 autoCapitalize="off"
                 autoComplete="off"
